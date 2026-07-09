@@ -10,9 +10,18 @@
     padding: 20px;
 }
 h2{
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 form {
   display: flex;
   flex-direction: column;
+  gap: 10px;
+}
+.error{
+  color: red;
+  margin-top:5px;
+}
+input{
+  line-height: 1.5rem;
+  
 }

@@ -76,7 +76,8 @@ src/
 │
 ├── components/
 │   ├── Login.jsx
-│   └── ...
+│   └── Header.jsx
+|   └── VistaSemanal.jsx
 │
 ├── App.jsx
 └── main.jsx

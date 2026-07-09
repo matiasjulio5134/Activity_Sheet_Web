@@ -1,11 +1,10 @@
 import React, { useState } from "react";
 
-export default function Login() {
+export default function Login({ setLogin }) {
 
     const [dni, setDni] = useState("");
     const [password, setPassword] = useState("");
 
-    // <-- CORREGIDO: la E de Error en mayúscula
     const [errorDni, setErrorDni] = useState("");
     const [errorPassword, setErrorPassword] = useState("");
 
@@ -69,6 +68,8 @@ export default function Login() {
         // Si todo está correcto
         if (valido) {
             console.log("Iniciando sesión con:", { dni, password });
+
+            setLogin(true);
         }
     };
 
