@@ -1,24 +1,15 @@
-import { useState } from 'react'
-import React from 'react'
-import Login from './components/Login'
-import Header from './components/Header'
-import VistaSemanal from './components/VistaSemanal'
-import './App.css'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./components/Login";
+import Weeks from "./components/Weeks";
 
 function App() {
-
-    const [login, setLogin] = useState(false);
-
-    if (!login) {
-        return <Login setLogin={setLogin} />;
-    }
-
     return (
-        <>
-            <Header nombre="Juan Pérez" setLogin={setLogin} />
-            <VistaSemanal />
-        </>
-    );
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Login />} />
+                <Route path="/weeks" element={<Weeks />} />
+            </Routes>
+        </BrowserRouter>
+    )
 }
-
 export default App;
