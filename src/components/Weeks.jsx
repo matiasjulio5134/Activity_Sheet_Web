@@ -38,6 +38,13 @@ function Weeks() {
   }
   // ======================================================
 
+  // ======================================================
+  // Funcion editarSemana
+  function editarSemana(numero){
+    navigate("/editweek/" + numero);
+  }
+  // ======================================================
+
   return (
   <div>
     <header>
@@ -56,6 +63,7 @@ function Weeks() {
       <div key={semana.numero}>
        <h3>Semana {semana.numero}</h3>
        <p><strong>Estado:</strong>{semana.estado}</p> 
+       <button onClick={() => editarSemana(semana.numero)}>Editar</button>
        <button>Descargar</button>
        <hr />
        </div>

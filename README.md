@@ -30,7 +30,7 @@ La aplicación facilita la creación de una hoja de prácticas, el registro sema
 - (Pendiente de implementar)
 
 ### Base de datos
-- (Pendiente de implementar)
+- MongoDB
 
 ---
 
@@ -51,37 +51,30 @@ git clone https://github.com/usuario/nombre-del-repositorio.git
 
 2. Acceder a la carpeta del proyecto:
 
-```bash
 cd nombre-del-repositorio
-```
 
 3. Instalar las dependencias:
 
-```bash
 npm install
-```
 
 4. Ejecutar la aplicación:
 
-```bash
 npm run dev
-```
 
 ---
 
 ## Estructura del proyecto
 
-```
 src/
 │
 ├── components/
 │   ├── Login.jsx
-│   └── Header.jsx
-|   └── VistaSemanal.jsx
+│   └── Weeks.jsx
+|   └── EditWeeks.jsx
 │
 ├── App.jsx
 └── main.jsx
-```
+
 
 ---
 
@@ -94,10 +87,10 @@ Actualmente se encuentra implementado:
 - Pantalla de inicio de sesión.
 - Validación del DNI mediante el algoritmo oficial.
 - Validación de contraseña.
+- Gestión de hojas de prácticas.
 
 Próximamente:
 
-- Gestión de hojas de prácticas.
 - Registro semanal de actividades.
 - Descarga de documentos Word.
 - Integración con backend y base de datos.
