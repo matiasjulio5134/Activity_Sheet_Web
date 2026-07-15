@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-
+import { axiosInstance } from '../utils/axios';
 
 function Login() {
     const [dni, setDni] = useState('');
@@ -40,8 +40,8 @@ function Login() {
     // ======================================================
 
     // ======================================================
-    // Se ejecuta al pulsar el boton
-    function iniciarSesion() {
+    // Se ejecuta al pulsar el boton. Funcion iniciar Sesion
+    async function iniciarSesion() {
         // Limpiar errores anteriores
         setErrorDni("");
         setErrorPassword("");
@@ -71,16 +71,35 @@ function Login() {
         if (!formularioValido) {
             return;
         }
+        
+        // Datos que se enviaran al BACKEND
+        const userData = {
+            dni,
+            password
+        };
 
-        // Simulación de login
-        console.log("Voy a Weeks");
+        try {
+            // Llamada al BACKEND
+            const resp = await axiosInstance.post("/users/login", userData);
+            
+            // Mostar la respuesta por consola
+            console.log(resp.data);
 
-        localStorage.setItem("usuario", dni);
+            // Guardar los datos del usuario
+            localStorage.setItem("usuario", JSON.stringify(resp.data));
 
-        navigate("/weeks");
-        // Aqui irá la llamada al BACKEND
-        // De momento simulamos un error de login
-        // setErrorLogin("El DNI o la contraseña son incorrectos");
+            // Ir a la pantalla de semanas
+            navigate("/weeks");
+        } catch (error) {
+            // Si el login falla
+            setErrorLogin("DNI o contraseña incorrectos");
+
+            console.error(
+                error.response?.data || error.message
+            );
+        }
+        // =====================================================
+        
     }
     return (
         <div>
