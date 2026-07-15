@@ -25,3 +25,165 @@ input{
   line-height: 1.5rem;
   
 }
+/*===================
+
+/*===================
+/* week.jsx*/
+/* Encabezado */
+.cabecera {
+  background-color: #ffffff;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); /* Sombra muy sutil abajo */
+  border-bottom: 1px solid #f3f4f6;
+  box-sizing: border-box;
+}
+.encabezado{
+  max-width: 1200px; /* Alínea el contenido con el resto de la página */
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  font-size: 1.25rem; /* ~20px */
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #0f172a; /* Gris casi negro */
+  margin: 0;
+}
+.logo .naranja {
+  color: #f97316; /* Naranja corporativo de la imagen */
+}
+.iniciales-container {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Espacio entre el círculo y el botón */
+}
+.avatar-circulo {
+  background-color: #0f172a; /* Fondo azul oscuro/negro */
+  color: #ffffff;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%; /* Hace que sea un círculo perfecto */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+}
+.btn-cerrar-sesion {
+  background-color: #00a8cc; /* Azul turquesa de la imagen */
+  color: #ffffff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 12px; /* Esquinas bastante redondeadas */
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+.btn-cerrar-sesion:hover {
+  background-color: #0090b0;
+}
+/* ============================== */
+
+/* ============================== */
+/* Contenido */
+.pantalla-practicas {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #1e293b;
+  margin: 0;
+  padding-bottom: 40px;
+}
+/* --- LISTADO DE SEMANAS --- */
+.titulo-seccion {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 16px;
+}
+.listado-semanas {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+/* Tarjeta contenedora de cada semana */
+.semana-tarjeta {
+  background-color: #ffffff;
+  padding: 20px 24px;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+.semana-titulo {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 6px 0;
+}
+.semana-fechas {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin: 0;
+}
+.semana-acciones {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.estado-badge {
+  padding: 8px 24px;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+  min-width: 110px;
+}
+.badge-completado {
+  background-color: #10b981; /* Verde */
+}
+
+.badge-pendiente {
+  background-color: #ca8a04; /* Amarillo / Ocre */
+}
+/* Botones de Acción (Editar / Descargar) */
+.btn-accion {
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  padding: 8px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-accion:hover:not(:disabled) {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+.btn-accion:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+/* Responsive para pantallas móviles */
+@media (max-width: 640px) {
+  .semana-tarjeta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .semana-acciones {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
