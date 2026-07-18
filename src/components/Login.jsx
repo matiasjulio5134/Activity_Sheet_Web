@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from '../utils/axios';
+import { FaUser, FaLock } from 'react-icons/fa';
 
 function Login() {
     const [dni, setDni] = useState('');
@@ -71,7 +72,7 @@ function Login() {
         if (!formularioValido) {
             return;
         }
-        
+
         // Datos que se enviaran al BACKEND
         const userData = {
             dni,
@@ -81,7 +82,7 @@ function Login() {
         try {
             // Llamada al BACKEND
             const resp = await axiosInstance.post("/users/login", userData);
-            
+
             // Mostar la respuesta por consola
             console.log(resp.data);
 
@@ -99,44 +100,57 @@ function Login() {
             );
         }
         // =====================================================
-        
+
     }
     return (
-        <div>
-            <h2>Iniciar sesión</h2>
+        <div className="login-container">
+            <div className="login-card">
+                <h2>Acceso Alumnos</h2>
+                <p className="login-subtitle">
+                    Accede con tu DNI y contraseña.    
+                </p>
+                <div className="form-group">
+                    <label>DNI:</label>
+                    <div className="input-container">
+                        <FaUser className="input-icon" />
+                    <input 
+                        className="login-input"
+                        type="text"
+                        value={dni}
+                        onChange={(e) => setDni(e.target.value)}
+                        placeholder="12345678A"
+                        required
+                    />
+                    </div>
+                    {errorDni && (
+                        <p className="error">{errorDni}</p>
+                    )}
+                </div>
 
-            <div>
-                <label>DNI:</label><br />
-                <input
-                    type="text"
-                    value={dni}
-                    onChange={(e) => setDni(e.target.value)}
-                    placeholder="12345678A"
-                    required
-                />
-                {errorDni && (
-                    <p>{errorDni}</p>
+                <div className="form-group">
+                    <label>Contraseña:</label>
+                    <div className="input-container">
+                        <FaLock className="input-icon" />
+                    <input
+                        className="login-input"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="************"
+                        required
+                    />
+                    </div>
+                    {errorPassword && (
+                        <p className="error">{errorPassword}</p>
+                    )}
+                </div>
+                <button
+                    className="login-button"
+                    onClick={iniciarSesion}>Iniciar sesión</button>
+                {errorLogin && (
+                    <p className="error login-error">{errorLogin}</p>
                 )}
             </div>
-            <br />
-            <div>
-                <label>Contraseña:</label><br />
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-
-                />
-                {errorPassword && (
-                    <p>{errorPassword}</p>
-                )}
-            </div>
-            <br />
-            <button onClick={iniciarSesion}>Iniciar sesión</button>
-            {errorLogin && (
-                <p>{errorLogin}</p>
-            )}
         </div>
     )
 }

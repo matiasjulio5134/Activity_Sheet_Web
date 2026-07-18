@@ -1,71 +1,169 @@
+/*==============================*/
+/*Login.jsx*/
+/*Fondo de la pagina*/
 .login-container {
+  min-height: 100vh;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  background: #16384c;
 }
-.login-card{
-    border: 1px solid black;
-    padding: 20px;
+
+/*Target*/
+.login-card {
+  width: 400px;
+  background: #fff;
+  padding: 35px;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.02);
 }
-h2{
+
+/*Titulo*/
+.login-card h2 {
+  margin: 0 0 10px;
+  font-size: 30px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+/*Subtitulo*/
+.login-subtitle {
+  margin: 0 0 25px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/*Campos*/
+.form-group {
   margin-bottom: 20px;
 }
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.error{
-  color: red;
-  margin-top:5px;
-}
-input{
-  line-height: 1.5rem;
-  
-}
-/*===================
 
-/*===================
+/*Labels*/
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+}
+
+/*Input*/
+.login-input {
+  width: 100%;
+  padding: 13px 15px 13px 45px;
+  box-sizing: border-box;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: #f3f4f6;
+  outline: none;
+  font-size: 15px;
+}
+
+.login-input:focus {
+  border-color: #19A8D9;
+  background: #fff;
+}
+
+.input-container {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 16px;
+}
+
+/*Boton*/
+.login-button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: #19A9D9;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.login-button:hover {
+  background: #138cbc;
+}
+
+/*Errores*/
+.error {
+  margin-top: 6px;
+  color: #dc2626;
+  font-size: 13px;
+}
+
+.login-error {
+  text-align: center;
+  margin-top: 15px;
+}
+
+/*===================*/
+
+/*===================*/
 /* week.jsx*/
 /* Encabezado */
 .cabecera {
   background-color: #ffffff;
   width: 100%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); /* Sombra muy sutil abajo */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  /* Sombra muy sutil abajo */
   border-bottom: 1px solid #f3f4f6;
   box-sizing: border-box;
 }
-.encabezado{
-  max-width: 1200px; /* Alínea el contenido con el resto de la página */
+
+.encabezado {
+  max-width: 1200px;
+  /* Alínea el contenido con el resto de la página */
   margin: 0 auto;
   padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .logo {
-  font-size: 1.25rem; /* ~20px */
+  font-size: 1.25rem;
+  /* ~20px */
   font-weight: 800;
   letter-spacing: 0.05em;
-  color: #0f172a; /* Gris casi negro */
+  color: #0f172a;
+  /* Gris casi negro */
   margin: 0;
 }
+
 .logo .naranja {
-  color: #f97316; /* Naranja corporativo de la imagen */
+  color: #f97316;
+  /* Naranja corporativo de la imagen */
 }
+
 .iniciales-container {
   display: flex;
   align-items: center;
-  gap: 16px; /* Espacio entre el círculo y el botón */
+  gap: 16px;
+  /* Espacio entre el círculo y el botón */
 }
+
 .avatar-circulo {
-  background-color: #0f172a; /* Fondo azul oscuro/negro */
+  background-color: #0f172a;
+  /* Fondo azul oscuro/negro */
   color: #ffffff;
   width: 40px;
   height: 40px;
-  border-radius: 50%; /* Hace que sea un círculo perfecto */
+  border-radius: 50%;
+  /* Hace que sea un círculo perfecto */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -73,20 +171,25 @@ input{
   font-size: 0.875rem;
   text-transform: uppercase;
 }
+
 .btn-cerrar-sesion {
-  background-color: #00a8cc; /* Azul turquesa de la imagen */
+  background-color: #00a8cc;
+  /* Azul turquesa de la imagen */
   color: #ffffff;
   border: none;
   padding: 10px 22px;
-  border-radius: 12px; /* Esquinas bastante redondeadas */
+  border-radius: 12px;
+  /* Esquinas bastante redondeadas */
   font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
 }
+
 .btn-cerrar-sesion:hover {
   background-color: #0090b0;
 }
+
 /* ============================== */
 
 /* ============================== */
@@ -99,6 +202,7 @@ input{
   margin: 0;
   padding-bottom: 40px;
 }
+
 /* --- LISTADO DE SEMANAS --- */
 .titulo-seccion {
   font-size: 1.15rem;
@@ -106,11 +210,13 @@ input{
   color: #0f172a;
   margin-bottom: 16px;
 }
+
 .listado-semanas {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
+
 /* Tarjeta contenedora de cada semana */
 .semana-tarjeta {
   background-color: #ffffff;
@@ -122,22 +228,26 @@ input{
   align-items: center;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
 }
+
 .semana-titulo {
   font-size: 1.15rem;
   font-weight: 800;
   color: #0f172a;
   margin: 0 0 6px 0;
 }
+
 .semana-fechas {
   font-size: 0.85rem;
   color: #94a3b8;
   margin: 0;
 }
+
 .semana-acciones {
   display: flex;
   align-items: center;
   gap: 12px;
 }
+
 .estado-badge {
   padding: 8px 24px;
   border-radius: 9999px;
@@ -147,13 +257,17 @@ input{
   text-align: center;
   min-width: 110px;
 }
+
 .badge-completado {
-  background-color: #10b981; /* Verde */
+  background-color: #10b981;
+  /* Verde */
 }
 
 .badge-pendiente {
-  background-color: #ca8a04; /* Amarillo / Ocre */
+  background-color: #ca8a04;
+  /* Amarillo / Ocre */
 }
+
 /* Botones de Acción (Editar / Descargar) */
 .btn-accion {
   background-color: #ffffff;
@@ -166,14 +280,17 @@ input{
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .btn-accion:hover:not(:disabled) {
   background-color: #f8fafc;
   border-color: #94a3b8;
 }
+
 .btn-accion:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
+
 /* Responsive para pantallas móviles */
 @media (max-width: 640px) {
   .semana-tarjeta {
@@ -181,9 +298,15 @@ input{
     align-items: flex-start;
     gap: 16px;
   }
+
   .semana-acciones {
     width: 100%;
     justify-content: flex-start;
     flex-wrap: wrap;
   }
 }
+
+/*==============================*/
+
+/*==============================*/
+/**/
