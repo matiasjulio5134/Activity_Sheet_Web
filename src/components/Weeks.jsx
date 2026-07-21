@@ -4,12 +4,8 @@ function Weeks() {
   const navigate = useNavigate();
 
   // =====================================================
-  // Datos de ejemplo
-  const alumno = {
-    nombre: "Juan Perez",
-    fechaInicio: "14/07/2025",
-    fechaFin: "20/09/2025"
-  };
+  // Datos de alumnos
+  const alumno = JSON.parse(localStorage.getItem("usuario"));
   // =====================================================
 
   // =====================================================
@@ -25,8 +21,18 @@ function Weeks() {
   // ======================================================
   // Funcion para obtener iniciales del nombre del alumno
   function obtenerIniciales(nombre) {
-    const palabras = nombre.split(" ");
-    return palabras[0][0] + palabras[1][0];
+     if (!nombre) return "";
+
+    const palabras = nombre.trim().split(" ");
+
+    if (palabras.length === 1) {
+        return palabras[0].substring(0, 2).toUpperCase();
+    }
+
+    return (
+        palabras[0][0] +
+        palabras[palabras.length - 1][0]
+    ).toUpperCase();
   }
   // ======================================================
 
@@ -43,8 +49,8 @@ function Weeks() {
   function puedeEditar(semana) {
     if (semana.estado === "Completado") { return false; }
     if (semana.estado === "Anulada") { return false; }
-    if (semana.estado === "En curso") { return false; }
-    if (semana.estado === "Pendiente" && !semana.actual) { return false; }
+    if (semana.estado === "En curso") { return true; }
+    if (semana.estado === "Pendiente" && semana.actual) { return true; }
     return false;
   }
   // Con esta funcion:
@@ -59,7 +65,7 @@ function Weeks() {
   // ======================================================
   // Funcion Descargar Word
   function puedeDescargar(semana) {
-    return semana.estado === "Completada";
+    return semana.estado === "Completado";
   }
   // ======================================================
 

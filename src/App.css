@@ -158,12 +158,10 @@
 
 .avatar-circulo {
   background-color: #0f172a;
-  /* Fondo azul oscuro/negro */
   color: #ffffff;
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  /* Hace que sea un círculo perfecto */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -174,12 +172,10 @@
 
 .btn-cerrar-sesion {
   background-color: #00a8cc;
-  /* Azul turquesa de la imagen */
   color: #ffffff;
   border: none;
   padding: 10px 22px;
   border-radius: 12px;
-  /* Esquinas bastante redondeadas */
   font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
@@ -203,7 +199,7 @@
   padding-bottom: 40px;
 }
 
-/* --- LISTADO DE SEMANAS --- */
+/* LISTADO DE SEMANAS */
 .titulo-seccion {
   font-size: 1.15rem;
   font-weight: 800;
@@ -308,5 +304,290 @@
 
 /*==============================*/
 
-/*==============================*/
-/**/
+/*==============================
+PAGINA DE REGISTRO DE ACTIVIDAES
+===============================*/
+.activities-page {
+  min-height: 100vh;
+  padding: 25px 35px;
+  background: #f7f7f7;
+  box-sizing: border-box;
+}
+
+/*=============================
+CABECERA
+==============================*/
+.activities-header {
+  margin-bottom: 25px;
+}
+
+.activities-header h1 {
+  margin: 0 0 5px;
+  font-size: 22px;
+  color: #222;
+}
+
+.activities-header h3 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  color: #555;
+}
+
+/*=============================
+CONTENEDOR DE LOS DIAS
+==============================*/
+.days-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/*=============================
+TARJETA DE CADA DIA
+==============================*/
+.day-card {
+  background: #fff;
+  margin-bottom: 20px;
+  padding: 20px 42px;
+  border-radius: 10px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, .25);
+}
+
+/*=============================
+CABECERA DEL DIA
+==============================*/
+.day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.day-header h3 {
+  margin: 0;
+  font-size: 17px;
+  color: #16384c;
+}
+
+.day-header p {
+  margin: 0;
+  font-size: 11px;
+  color: #444;
+}
+
+/*=============================
+BOTONES Y AUSENCIAS
+==============================*/
+.day-controls {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.add-task-button {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 15px;
+  background: #fff;
+  color: #222;
+  font-size: 10px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+
+.add-task-button:hover {
+  background: #f3f3f3;
+}
+
+.absence-select {
+  padding: 6px 12px;
+  border: 1px solid #ff8a3d;
+  border-radius: 15px;
+  background: #fff;
+  color: #ff7a25;
+  font-size: 10px;
+  outline: none;
+  cursor: pointer;
+}
+
+/*=============================
+LISTA DE TAREAS
+==============================*/
+.listaTareas {
+  display: flex;
+  flex-direction: column;
+  max-height: 100px;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.task-row {
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+}
+
+/*Input Tarea*/
+.task-input {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 12px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 10px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.task-input:focus {
+  border-color: #19a9d9;
+}
+
+/*=============================
+BOTON EDITAR
+==============================*/
+.edit-button {
+  width: 55px;
+  margin-left: 12px;
+  padding: 6px 5px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  color: #333;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.edit-button:hover {
+  background: #f5f5f5;
+}
+
+/*=============================
+BOTON BORRAR
+==============================*/
+.delete-button {
+  width: 58px;
+  margin-left: 10px;
+  padding: 6px 5px;
+  border: none;
+  border-radius: 10px;
+  background: #f2cfd1;
+  color: #d9535f;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background: #eab8bb;
+}
+
+/*=============================
+SIN TAREAS
+==============================*/
+.no-task {
+  margin: 8px 0 0;
+  font-size: 10px;
+  color: #555;
+}
+
+/*=============================
+BOTONES FINALES
+==============================*/
+.week-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 20px;
+}
+
+/*Boton cancelar*/
+.cancel-button {
+  padding: 10px 18px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 9px;
+  background: #fff;
+  color: #333;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.cancel-button:hover {
+  background: #eee;
+}
+
+/*Boton Guardar*/
+.save-button {
+  padding: 10px 20px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 9px;
+  background: #20bd75;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.save-button:hover {
+  background: #18a766;
+}
+
+/* Boton finalizar*/
+.finish-button {
+  padding: 10px 18px;
+  margin-left: 10px;
+  border: none;
+  border-radius: 9px;
+  background: #19a9d9;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.finish-button:hover {
+  background: #138cbc;
+}
+
+/* ========================================
+   MODAL
+======================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, .5);
+  z-index: 1000;
+}
+
+.delete-modal {
+  width: 400px;
+  padding: 25px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, .3);
+}
+
+.delete-modal h3 {
+  margin-top: 0;
+  color: #222;
+}
+
+.delete-modal p {
+  color: #555;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}

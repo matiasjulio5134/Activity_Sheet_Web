@@ -4,6 +4,7 @@ import { useState } from "react";
 function EditWeek() {
     const navigate = useNavigate();
     const { numero } = useParams();
+    const alumno = JSON.parse(localStorage.getItem("usuario"));
     const [dias, setDias] = useState([
         {
             nombre: "Lunes",
@@ -67,8 +68,42 @@ function EditWeek() {
     const [tareaABorrar, setTareaABorrar] = useState(null);
 
     // =================================================
+    // funcion cerrarsesion
+    function cerrarSesion() {
+        localStorage.removeItem("usuario");
+        navigate("/");
+    }
+    // =================================================
+
+    // =================================================
+    // funcion obenter iniciales
+    function obtenerIniciales(nombre) {
+        if (!nombre) return "";
+
+        const partes = nombre.trim().split(" ");
+
+        if (partes.length === 1) {
+            return partes[0].substring(0, 2).toUpperCase();
+        }
+
+        return (
+            partes[0].charAt(0) +
+            partes[partes.length - 1].charAt(0)
+        ).toUpperCase();
+    }
+    // =================================================
+
+    // =================================================
     // funcion cancelar
     function cancelar() {
+        navigate("/weeks");
+    }
+    // =================================================
+
+    // =================================================
+    // Funcion Guardar semana
+    function guardar(){
+        alert("Semana guardada correctamente");
         navigate("/weeks");
     }
     // =================================================
@@ -174,81 +209,164 @@ function EditWeek() {
 
     // =================================================
     return (
-        <div>
-            <h1>Registro de Actividades</h1>
-            <h3>Semana {numero}</h3>
-            {dias.map((dia, indiceDia) => (
-                <div key={dia.nombre}>
-                    <h3>{dia.nombre}</h3>
-                    <p>{dia.fecha}</p>
-                    <button onClick={() => agregarTarea(indiceDia)}>Agregar tarea</button>
+        <div className="pantalla-practicas">
 
-                    <select>
-                        <option>-- Indicar Ausencia --</option>
-                        <option>Baja Médica / Enfermedad</option>
-                        <option>Asuntos Propios</option>
-                        <option>Día Festivo</option>
-                    </select>
+            {/* HEADER AÑADIDO */}
+            <header className="cabecera">
+                <div className="encabezado">
 
-                    <br />
-                    <br />
-                    <div className="listaTareas">
-                        {dia.tareas.length === 0 ? (
-                            <p>No hay tareas registradas</p>
-                        ) : (
-                            dia.tareas.map((tarea, index) => (
-                                <div key={index}>
-                                    {tarea.editando ? (
-                                        <input
-                                            type="text"
-                                            value={tarea.texto}
-                                            maxLength={200}
-                                            onChange={(e) =>
-                                                cambiarTexto(indiceDia, index, e.target.value)
-                                            }
-                                            onKeyDown={(e) => {
-                                                if (e.key === "Enter") {
-                                                    guardarTarea(indiceDia, index);
-                                                }
-                                                if (e.key === "Escape") {
-                                                    cancelarEdicion(indiceDia, index);
-                                                }
-                                            }}
-                                        />
-                                    ) : (
-                                        <input
-                                            type="text"
-                                            value={tarea.texto}
-                                            readOnly
-                                        />
-                                    )}
-                                    <button onClick={() => editarTarea(indiceDia, index)}>Editar</button>
-                                    <button onClick={() => abrirModal(indiceDia, index)}>Borrar</button>
-                                </div>
-                            ))
-                        )}
-                        <hr />
+                    <h2 className="logo">
+                        <span className="naranja">CAS</span> Training
+                    </h2>
+
+                    <div className="iniciales-container">
+
+                        <span className="avatar-circulo">
+                            {obtenerIniciales(alumno.nombre)}
+                        </span>
+
+                        <button
+                            className="btn-cerrar-sesion"
+                            onClick={cerrarSesion}
+                        >
+                            Cerrar sesión
+                        </button>
+
                     </div>
+
                 </div>
-            ))}
-            {mostrarModal && (
-                <div>
-                    <h3>Confirmar borrado</h3>
-                    <p>
-                        ¿Quieres borrar la tarea "
-                        {
-                            dias[tareaABorrar.indiceDia]
-                                .tareas[tareaABorrar.indiceTarea]
-                                .texto.substring(0, 100)
-                        }"?
-                    </p>
-                    <button onClick={cancelarBorrado}>Cancelar</button>
-                    <button onClick={borrarTarea}>Aceptar</button>
+            </header>
+            <div className="activities-page">
+                <div className="activities-header">
+                    <h1>Registro de Actividades</h1>
+                    <h3>Semana {numero}</h3>
                 </div>
-            )}
-            <button onClick={cancelar}>Cancelar</button>
-            <button>Guardar</button>
-            <button>Finalizar Semana</button>
+                <div className="days-container">
+                    {dias.map((dia, indiceDia) => (
+                        <div className="day-card" key={dia.nombre}>
+                            <div className="day-header">
+                                <h3>{dia.nombre}</h3>
+                                <p>{dia.fecha}</p>
+                            </div>
+                            <div className="day-controls">
+                                <button
+                                    className="add-task-button"
+                                    onClick={() => agregarTarea(indiceDia)}>
+                                    Agregar tarea
+                                </button>
+
+                                <select className="absence-select">
+                                    <option>-- Indicar Ausencia --</option>
+                                    <option>Baja Médica / Enfermedad</option>
+                                    <option>Asuntos Propios</option>
+                                    <option>Día Festivo</option>
+                                </select>
+                            </div>
+
+                            <div className="listaTareas">
+                                {dia.tareas.length === 0 ? (
+                                    <p className="no-tasks">
+                                        No hay tareas registradas
+                                    </p>
+                                ) : (
+                                    dia.tareas.map((tarea, index) => (
+                                        <div className="task-row" key={index}>
+                                            {tarea.editando ? (
+                                                <input
+                                                    className="task-input"
+                                                    type="text"
+                                                    value={tarea.texto}
+                                                    maxLength={200}
+                                                    onChange={(e) =>
+                                                        cambiarTexto(
+                                                            indiceDia,
+                                                            index,
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter") {
+                                                            guardarTarea(
+                                                                indiceDia,
+                                                                index
+                                                            );
+                                                        }
+                                                        if (e.key === "Escape") {
+                                                            cancelarEdicion(
+                                                                indiceDia,
+                                                                index
+                                                            );
+                                                        }
+                                                    }}
+                                                />
+                                            ) : (
+                                                <input
+                                                    className="task-input"
+                                                    type="text"
+                                                    value={tarea.texto}
+                                                    readOnly
+                                                />
+                                            )}
+                                            <button
+                                                className="edit-button"
+                                                onClick={() =>
+                                                    editarTarea(
+                                                        indiceDia,
+                                                        index
+                                                    )
+                                                }
+                                            >
+                                                Editar
+                                            </button>
+                                            <button
+                                                className="delete-button"
+                                                onClick={() =>
+                                                    abrirModal(
+                                                        indiceDia,
+                                                        index
+                                                    )
+                                                }
+                                            >
+                                                Borrar
+                                            </button>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                {mostrarModal && (
+                    <div className="modal-overlay">
+                        <div className="delete-modal">
+                            <h3>Confirmar borrado</h3>
+                            <p>
+                                ¿Quieres borrar la tarea "
+                                {
+                                    dias[tareaABorrar.indiceDia]
+                                        .tareas[tareaABorrar.indiceTarea]
+                                        .texto.substring(0, 100)
+                                }"?
+                            </p>
+                            <div className="modal-actions">
+                                <button
+                                    className="cancel-button"
+                                    onClick={cancelarBorrado}>Cancelar</button>
+                                <button
+                                    className="delete-button"
+                                    onClick={borrarTarea}>Aceptar</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                <div className="week-actions">
+                    <button
+                        className="cancel-button"
+                        onClick={cancelar}>Cancelar</button>
+                    <button onClick={guardar} className="save-button">Guardar</button>
+                    <button className="finish-button">Finalizar Semana</button>
+                </div>
+            </div>
         </div>
     );
 }
