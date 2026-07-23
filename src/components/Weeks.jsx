@@ -5,7 +5,12 @@ function Weeks() {
 
   // =====================================================
   // Datos de alumnos
-  const alumno = JSON.parse(localStorage.getItem("usuario"));
+  //const alumno = JSON.parse(localStorage.getItem("usuario"));
+  const alumno = {
+    nombre: "Juan Perez",
+    fechaInicio: "08/06/2026",
+    fechaFin: "28/08/2026"
+  };
   // =====================================================
 
   // =====================================================
@@ -21,17 +26,17 @@ function Weeks() {
   // ======================================================
   // Funcion para obtener iniciales del nombre del alumno
   function obtenerIniciales(nombre) {
-     if (!nombre) return "";
+    if (!nombre) return "";
 
     const palabras = nombre.trim().split(" ");
 
     if (palabras.length === 1) {
-        return palabras[0].substring(0, 2).toUpperCase();
+      return palabras[0].substring(0, 2).toUpperCase();
     }
 
     return (
-        palabras[0][0] +
-        palabras[palabras.length - 1][0]
+      palabras[0][0] +
+      palabras[palabras.length - 1][0]
     ).toUpperCase();
   }
   // ======================================================
@@ -42,6 +47,77 @@ function Weeks() {
     localStorage.clear();
     navigate("/");
   }
+  // ======================================================
+
+  // ======================================================
+  // Funcion para calcular progreso
+  function calcularProgreso(fechaInicio, fechaFin) {
+    const inicio = convertirFecha(fechaInicio);
+    const fin = convertirFecha(fechaFin);
+    const hoy = new Date();
+
+    // En caso de que todavia no haya comenzado las practicas
+    if (hoy < inicio) {
+      return 0;
+    }
+    // O si ya han terminado
+    if (hoy >= fin) {
+      return 100;
+    }
+    const duracionTotal = fin - inicio;
+    const tiempoTrancurrido = hoy - inicio;
+
+    return Math.round(
+      (tiempoTrancurrido / duracionTotal) * 100
+    );
+  }
+  // ======================================================
+
+  // ======================================================
+  // Funcion para convertir fechas
+  function convertirFecha(fecha) {
+    const [dia, mes, año] = fecha.split("/");
+
+    return new Date(
+      Number(año),
+      Number(mes) - 1,
+      Number(dia)
+    );
+  }
+  // ======================================================
+
+  // ======================================================
+  // Funcion para calcular la semana
+  function calcularSemanaActual(fechaInicio) {
+    const inicio = convertirFecha(fechaInicio);
+    const hoy = new Date();
+
+    const diferencia = hoy - inicio;
+
+    const diasTrancurridos = Math.floor(
+      diferencia / (1000 * 60 * 60 * 24)
+    );
+
+    if (diasTrancurridos < 0) {
+      return 0;
+    }
+
+    return Math.floor(diasTrancurridos / 7) + 1;
+  }
+  // ======================================================
+
+  // ======================================================
+  // calcular datos de progreso
+  const progreso = calcularProgreso(
+    alumno.fechaInicio,
+    alumno.fechaFin
+  );
+  const semanaActual = calcularSemanaActual(
+    alumno.fechaInicio
+  );
+  const semanasCompletas = semanas.filter(
+    (semana) => semana.estado === "Completado"
+  ).length
   // ======================================================
 
   // ======================================================
@@ -81,7 +157,7 @@ function Weeks() {
       <header className="cabecera">
         <div className="encabezado">
           <h2 className="logo">
-            <span className="naranja">CAS</span> Training
+            Logo Empresa
           </h2>
           <div className="iniciales-container">
             <span className="avatar-circulo">
@@ -100,7 +176,27 @@ function Weeks() {
           <p className="texto-periodo"><strong>Fecha inicio:</strong> {alumno.fechaInicio}</p>
           <p className="texto-periodo"><strong>Fecha fin:</strong> {alumno.fechaFin}</p>
         </div>
+        <div className="progreso-practicas">
 
+          <div className="progreso-fila">
+            <div className="progreso-barra-contenedor">
+              <div
+                className="progreso-barra"
+                style={{ "--progreso": `${progreso}%` }}
+              ></div>
+            </div>
+
+            <span className="progreso-porcentaje">
+              {progreso}%
+            </span>
+          </div>
+
+          <p className="texto-progreso">
+            {semanasCompletas} de {semanas.length} semanas completadas
+            (Semana actual: {semanaActual})
+          </p>
+
+        </div>
         <h2 className="titulo-seccion">Listado de semanas</h2>
 
         <div className="listado-semanas">

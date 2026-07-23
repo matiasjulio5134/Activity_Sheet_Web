@@ -216,7 +216,7 @@ function EditWeek() {
                 <div className="encabezado">
 
                     <h2 className="logo">
-                        <span className="naranja">CAS</span> Training
+                        Logo Empresa
                     </h2>
 
                     <div className="iniciales-container">
