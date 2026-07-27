@@ -4,11 +4,50 @@ import { useState } from "react";
 function EditWeek() {
     const navigate = useNavigate();
     const { numero } = useParams();
+    function obtenerFechasSemana(numeroSemana) {
+        const fechaInicioPracticas = new Date("2026-08-03T00:00:00");
+
+        const inicio = new Date(fechaInicioPracticas);
+
+        // Cada semana suma 7 días
+        inicio.setDate(
+            inicio.getDate() + (Number(numeroSemana) - 1) * 7
+        );
+
+        const fechas = [];
+
+        // De lunes a viernes
+        for (let i = 0; i < 5; i++) {
+            const fecha = new Date(inicio);
+
+            fecha.setDate(inicio.getDate() + i);
+
+            fechas.push(fecha);
+        }
+
+        return fechas;
+    }
+    // =====================================
+
+    // =====================================
+    // Funcion para mostrar fecha correctamente
+    function formatearFecha(fecha) {
+        return fecha.toLocaleDateString("es-ES", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        });
+    }
+    // =====================================
+
+    // =====================================
+    const fechasSemana = obtenerFechasSemana(numero);
+
+    // =====================================
     const alumno = JSON.parse(localStorage.getItem("usuario"));
     const [dias, setDias] = useState([
         {
             nombre: "Lunes",
-            fecha: "08/06/2025",
             tareas: [
                 {
                     texto: "Generar Documento para POST",
@@ -20,7 +59,6 @@ function EditWeek() {
         },
         {
             nombre: "Martes",
-            fecha: "09/06/2025",
             tareas: [
                 {
                     texto: "Generar Documento para POST",
@@ -31,7 +69,6 @@ function EditWeek() {
         },
         {
             nombre: "Miercoles",
-            fecha: "10/06/2025",
             tareas: [
                 {
                     texto: "Generar Documento para POST",
@@ -42,7 +79,6 @@ function EditWeek() {
         },
         {
             nombre: "Jueves",
-            fecha: "11/06/2025",
             tareas: [
                 {
                     texto: "Generar Documento para POST",
@@ -53,7 +89,6 @@ function EditWeek() {
         },
         {
             nombre: "Viernes",
-            fecha: "12/06/2025",
             tareas: [
                 {
                     texto: "Generar Documento para POST",
@@ -66,6 +101,8 @@ function EditWeek() {
 
     const [mostrarModal, setMostrarModal] = useState(false);
     const [tareaABorrar, setTareaABorrar] = useState(null);
+    const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
+    const [mostrarModalGuardar, setMostrarModalGuardar] = useState(false);
 
     // =================================================
     // funcion cerrarsesion
@@ -96,15 +133,36 @@ function EditWeek() {
     // =================================================
     // funcion cancelar
     function cancelar() {
+        setMostrarModalCancelar(true);
+    }
+    // =================================================
+
+    // =================================================
+    // Funcion de acepta cancelacion
+    function confirmarCancelar() {
+        setMostrarModalCancelar(false)
         navigate("/weeks");
     }
     // =================================================
 
     // =================================================
+    function cerrarModalCancelar() {
+        setMostrarModalCancelar(false);
+    }
+    // =================================================
+
+    // =================================================
     // Funcion Guardar semana
-    function guardar(){
-        alert("Semana guardada correctamente");
+    function guardar() {
+        setMostrarModalGuardar(true);
+    }
+    function confirmarGuardar() {
+        setMostrarModalGuardar(false);
         navigate("/weeks");
+    }
+
+    function cerrarModalGuardar() {
+        setMostrarModalGuardar(false);
     }
     // =================================================
 
@@ -239,14 +297,19 @@ function EditWeek() {
             <div className="activities-page">
                 <div className="activities-header">
                     <h1>Registro de Actividades</h1>
-                    <h3>Semana {numero}</h3>
+                    <h3>Semana {numero} — Del{" "}
+                        {formatearFecha(fechasSemana[0])} al{" "}
+                        {formatearFecha(fechasSemana[4])}
+                    </h3>
                 </div>
                 <div className="days-container">
                     {dias.map((dia, indiceDia) => (
                         <div className="day-card" key={dia.nombre}>
                             <div className="day-header">
                                 <h3>{dia.nombre}</h3>
-                                <p>{dia.fecha}</p>
+                                <p>
+                                    {formatearFecha(fechasSemana[indiceDia])}
+                                </p>
                             </div>
                             <div className="day-controls">
                                 <button
@@ -355,6 +418,57 @@ function EditWeek() {
                                 <button
                                     className="delete-button"
                                     onClick={borrarTarea}>Aceptar</button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {mostrarModalCancelar && (
+                    <div className="modal-overlay">
+                        <div className="delete-modal">
+                            <p>
+                                ¿Estás seguro de que quieres Cancelar?
+                                Se perderán los datos introducidos.
+                            </p>
+
+                            <div className="modal-actions">
+                                <button
+                                    className="delete-button"
+                                    onClick={confirmarCancelar}
+                                >
+                                    Aceptar
+                                </button>
+
+                                <button
+                                    className="cancel-button"
+                                    onClick={cerrarModalCancelar}
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {mostrarModalGuardar && (
+                    <div className="modal-overlay">
+                        <div className="delete-modal">
+                            <p>
+                                ¿Estás seguro de que quieres guardar la semana?
+                            </p>
+
+                            <div className="modal-actions">
+                                <button
+                                    className="delete-button"
+                                    onClick={confirmarGuardar}
+                                >
+                                    Aceptar
+                                </button>
+
+                                <button
+                                    className="cancel-button"
+                                    onClick={cerrarModalGuardar}
+                                >
+                                    Cancelar
+                                </button>
                             </div>
                         </div>
                     </div>

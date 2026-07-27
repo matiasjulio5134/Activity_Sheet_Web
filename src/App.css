@@ -293,6 +293,40 @@
   gap: 16px;
 }
 
+/*================================*/
+/* AVISO FIN DE PRATICAS*/
+/*================================*/
+.contenedor-semana {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.aviso-semana {
+  background-color: #dc5a5a;
+  color: white;
+  width: 263px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  margin: 0 0 8px 30px;
+  box-sizing: border-box;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.cerrar-aviso {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
 /* Tarjeta contenedora de cada semana */
 .semana-tarjeta {
   background-color: #ffffff;
@@ -670,4 +704,80 @@ BOTONES FINALES
   display: flex;
   justify-content: flex-end;
   margin-top: 20px;
+}
+/* ================================= */
+/* MODAL DE CONFIRMACIÓN */
+/* ================================= */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.delete-modal {
+  width: 350px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+.delete-modal p {
+  margin: 0 0 25px 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: #222222;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Botones del modal */
+.modal-actions button {
+  width: 100px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* Botón Aceptar */
+.modal-actions .delete-button {
+  background-color: #00a9d6;
+  color: white;
+}
+
+/* Botón Cancelar */
+.modal-actions .cancel-button {
+  background-color: #df5555;
+  color: white;
+}
+
+/* Efecto al pasar el ratón */
+.modal-actions .delete-button:hover {
+  background-color: #008fb5;
+}
+
+.modal-actions .cancel-button:hover {
+  background-color: #c94444;
 }

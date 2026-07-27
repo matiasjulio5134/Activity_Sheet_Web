@@ -39,7 +39,6 @@ function Weeks() {
         });
 
         const datos = response.data;
-
         console.log("DATOS RECIBIDOS:", datos);
 
         setAlumno({
@@ -297,58 +296,78 @@ function Weeks() {
         <div className="listado-semanas">
 
           {semanas.map((semana) => {
+            const estado = semana.status || "";
 
-            const isCompletado = semana.status?.toLowerCase() === "completado";
+            const isCompletado =
+              estado.toLowerCase() === "completado";
+
+            const fechaFinSemana = new Date(semana.end_date);
+
+            const fechaComprobar = fechaSimulada
+              ? new Date(fechaSimulada + "T23:59:59")
+              : new Date();
+
+            const semanaTerminada =
+              fechaComprobar > fechaFinSemana;
+
+            const mostrarAviso =
+              semanaTerminada && !isCompletado;
 
             return (
-              <div
-                key={semana.week_id}
-                className="semana-tarjeta"
-              >
+              <div key={semana.week_id} className="contenedor-semana">
 
-                <div className="semana-info">
+                {/* AVISO ENCIMA DE LA TARJETA */}
+                {mostrarAviso && (
+                  <div className="aviso-semana">
+                    <span>No olvides completar la semana</span>
 
-                  <h3 className="semana-titulo">
-                    Semana {semana.week_number}
-                  </h3>
+                    <button className="cerrar-aviso">
+                      ×
+                    </button>
+                  </div>
+                )}
 
-                  <p className="semana-fechas">
-                    Desde{" "}
-                    {formatearFecha(semana.start_date)}
-                    {" "}hasta{" "}
-                    {formatearFecha(semana.end_date)}
-                  </p>
+                {/* TARJETA DE LA SEMANA */}
+                <div className="semana-tarjeta">
 
-                </div>
+                  <div className="semana-info">
+                    <h3 className="semana-titulo">
+                      Semana {semana.week_number}
+                    </h3>
 
-                <div className="semana-acciones">
+                    <p className="semana-fechas">
+                      Desde {formatearFecha(semana.start_date)}
+                      hasta {formatearFecha(semana.end_date)}
+                    </p>
+                  </div>
 
-                  <span
-                    className={`estado-badge ${isCompletado
-                      ? "badge-completado"
-                      : "badge-pendiente"
-                      }`}
-                  >
-                    {semana.status}
-                  </span>
+                  <div className="semana-acciones">
 
-                  <button
-                    className="btn-accion"
-                    onClick={() =>
-                      editarSemana(semana.week_number)
-                    }
-                    disabled={!puedeEditar(semana)}
-                  >
-                    Editar
-                  </button>
+                    <span
+                      className={`estado-badge ${isCompletado
+                          ? "badge-completado"
+                          : "badge-pendiente"
+                        }`}
+                    >
+                      {semana.status}
+                    </span>
 
-                  <button
-                    className="btn-accion"
-                    disabled={!puedeDescargar(semana)}
-                  >
-                    Descargar
-                  </button>
+                    <button
+                      className="btn-accion"
+                      onClick={() => editarSemana(semana.week_number)}
+                      disabled={!puedeEditar(semana)}
+                    >
+                      Editar
+                    </button>
 
+                    <button
+                      className="btn-accion"
+                      disabled={!puedeDescargar(semana)}
+                    >
+                      Descargar
+                    </button>
+
+                  </div>
                 </div>
 
               </div>
