@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from '../utils/axios';
-import { FaUser, FaLock } from 'react-icons/fa';
+import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 function Login() {
     const [dni, setDni] = useState('');
     const [password, setPassword] = useState('');
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const navigate = useNavigate();
 
     // Errores de validación
@@ -37,6 +38,13 @@ function Login() {
     function validarPassword(password) {
         const formato = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#_-]).{6,}$/;
         return formato.test(password);
+    }
+    // ======================================================
+
+    // ======================================================
+    // Funcion para mostrar contraseña
+    const togglePassword = () => {
+        setIsPasswordVisible((prev) => !prev);
     }
     // ======================================================
 
@@ -136,12 +144,19 @@ function Login() {
                         <FaLock className="input-icon" />
                     <input
                         className="login-input"
-                        type="password"
+                        type={isPasswordVisible ? "text" : "password"}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="************"
                         required
                     />
+                    {/* Botón mostrar/ocultar contraseña */}
+                    <button
+                        type="button"
+                        className="password-toggle"
+                        onClick={togglePassword}
+                    >{isPasswordVisible ? <FaEyeSlash /> : <FaEye />}
+                    </button>
                     </div>
                     {errorPassword && (
                         <p className="error">{errorPassword}</p>
