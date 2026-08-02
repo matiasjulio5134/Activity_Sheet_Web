@@ -1,5 +1,8 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
+import { FaGithub, FaLinkedin, FaEnvelope, FaWhatsapp, FaDiscord } from "react-icons/fa";
+import { SiGmail } from "react-icons/si";
+import axios from "axios";
 
 function EditWeek() {
     const navigate = useNavigate();
@@ -103,6 +106,7 @@ function EditWeek() {
     const [tareaABorrar, setTareaABorrar] = useState(null);
     const [mostrarModalCancelar, setMostrarModalCancelar] = useState(false);
     const [mostrarModalGuardar, setMostrarModalGuardar] = useState(false);
+    const [mostrarModalFinalizar, setMostrarModalFinalizar] = useState(false);
 
     // =================================================
     // funcion cerrarsesion
@@ -163,6 +167,44 @@ function EditWeek() {
 
     function cerrarModalGuardar() {
         setMostrarModalGuardar(false);
+    }
+    // =================================================
+    // =================================================
+    // Funcion abrir modal finalizar
+    function finalizar() {
+        setMostrarModalFinalizar(true);
+    }
+
+    // Funcion cancelar modal finalizar
+    function cerrarModalFinalizar() {
+        setMostrarModalFinalizar(false);
+    }
+
+    // Funcion aceptar finalizar semana
+    async function confirmarFinalizar() {
+        console.log("Entrando en finalizar semana");
+
+        setMostrarModalFinalizar(false);
+        try {
+            const token = localStorage.getItem("token");
+
+            await axios.put(
+                `http://localhost:3000/weeklyLogs/${numero}/completed`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            navigate("/weeks");
+        } catch (error) {
+            console.error(
+                "Error finalizando semana:",
+                error
+            );
+        }
     }
     // =================================================
 
@@ -262,9 +304,52 @@ function EditWeek() {
         setMostrarModal(false);
         setTareaABorrar(null);
     }
-
     // =================================================
 
+    // =================================================
+    // Funcion finalizar semana
+    async function finalizarSemana() {
+        // comprobar tareas vacias
+        const tareasVacias = dias.some(dia =>
+            dia.tareas.some(tarea => tarea.texto.trim() === "")
+        );
+
+        if (tareasVacias) {
+            alert("Completa todas las tareas antes de finalizar la semana");
+            return;
+        }
+        try {
+            const token = localStorage.getItem("token");
+            // Guardar tareas
+            await axios.put(
+                `http://localhost:3000/weeklyLogs/${numero}`,
+                {
+                    dias: dias
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            // Cambiar estado a completada
+            await axios.put(
+                `http://localhost:3000/weeklyLogs/${numero}/completed`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            navigate("/weeks");
+        } catch (error) {
+            console.error(
+                "Error finalizando semana:",
+                error
+            );
+        }
+    }
     // =================================================
     return (
         <div className="pantalla-practicas">
@@ -473,14 +558,169 @@ function EditWeek() {
                         </div>
                     </div>
                 )}
+                {mostrarModalFinalizar && (
+                    <div className="modal-overlay">
+                        <div className="delete-modal">
+                            <p>
+                                ¿Estás seguro de que quieres finalizar la semana?
+                                <br />
+                                Una vez finalizada no podrás modificar las tareas.
+                            </p>
+                            <div className="modal-actions">
+                                <button
+                                    className="delete-button"
+                                    onClick={confirmarFinalizar}
+                                >
+                                    Aceptar
+                                </button>
+                                <button
+                                    className="cancel-button"
+                                    onClick={cerrarModalFinalizar}
+                                >
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
                 <div className="week-actions">
+
                     <button
                         className="cancel-button"
-                        onClick={cancelar}>Cancelar</button>
-                    <button onClick={guardar} className="save-button">Guardar</button>
-                    <button className="finish-button">Finalizar Semana</button>
+                        onClick={cancelar}>
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        onClick={guardar}
+                        className="save-button">
+                        Guardar
+                    </button>
+
+
+                    <button
+                        className="finish-button"
+                        onClick={finalizar}>
+                        Finalizar Semana
+                    </button>
+
                 </div>
             </div>
+
+            {/* ============================= */}
+            {/* FOOTER */}
+            {/* ============================= */}
+            <footer className="footer">
+                {/* IZQUIERDA */}
+                <div className="footer-col">
+                    <h2 className="footer-logo">
+                        <span className="naranja">
+                            ANMB
+                        </span> SOFTWARE
+                    </h2>
+                    <p>
+                        Desarrollo de aplicaciones web para la gestión de prácticas,
+                        formación y soluciones empresariales.
+                    </p>
+                </div>
+                {/* CENTRO */}
+                <div className="footer-col footer-centro">
+                    <h3>
+                        ¿Necesitas ayuda?
+                    </h3>
+
+                    <p>
+                        Si tienes alguna duda, ponte en contacto con nosotros.
+                    </p>
+
+                    <a className="btn-contactar">
+                        <FaEnvelope />
+                        Contactar
+                    </a>
+                </div>
+                {/* DERECHA */}
+                <div className="footer-col">
+                    <div className="equipo">
+
+                        <h4>
+                            Backend
+                        </h4>
+
+                        <p>
+                            Antonio Navarro
+                        </p>
+
+                        <div className="redes">
+                            <a
+                                href="https://github.com/anavarro81"
+                                target="_blank"
+                                rel="noreferrer"
+                                title="GitHub"
+                            >
+                                <FaGithub />
+                            </a>
+
+                            <a
+                                href="https://www.linkedin.com/in/antonio-navarro-deldujo/"
+                                target="_blank"
+                                rel="noreferrer"
+                                title="LinkedIn"
+                            >
+                                <FaLinkedin />
+                            </a>
+
+                            <a
+                                href="https://discord.gg/TU_INVITACION"
+                                target="_blank"
+                                rel="noreferrer"
+                                title="Discord"
+                            >
+                                <FaDiscord />
+                            </a>
+                        </div>
+                    </div>
+
+                    <div className="equipo">
+                        <h4>
+                            Frontend
+                        </h4>
+
+                        <p>
+                            Matías Briceño
+                        </p>
+
+                        <div className="redes">
+                            <a
+                                href="https://github.com/matiasjulio5134"
+                                target="_blank"
+                                rel="noreferrer"
+                                title="GitHub"
+                            >
+                                <FaGithub />
+                            </a>
+
+                            <a
+                                href="https://wa.me/643873510"
+                                target="_blank"
+                                rel="noreferrer"
+                                title="WhatsApp"
+                            >
+                                <FaWhatsapp />
+                            </a>
+
+                            <a
+                                href="https://mail.google.com/mail/?view=cm&fs=1&to=matiasjulio5134@gmail.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title="Gmail"
+                            >
+                                <SiGmail />
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 }

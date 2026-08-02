@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FaGithub, FaLinkedin, FaEnvelope, FaWhatsapp, FaDiscord } from "react-icons/fa";
+import { SiGmail } from "react-icons/si";
 import axios from "axios";
 
 function Weeks() {
@@ -26,6 +28,8 @@ function Weeks() {
     const obtenerPracticas = async () => {
       try {
         const token = localStorage.getItem("token");
+        console.log("TOKEN GUARDADO:", token);
+
 
         let url = "http://localhost:3000/internships/my-internship";
 
@@ -42,16 +46,17 @@ function Weeks() {
         });
 
         const datos = response.data;
-        console.log("DATOS RECIBIDOS:", datos);
-
+        console.log(
+          "DATOS RECIBIDOS:",
+          JSON.stringify(datos, null, 2)
+        );
         setAlumno({
           nombre: usuarioGuardado?.nombre || "",
           fechaInicio: datos.start_date,
           fechaFin: datos.end_date
         });
 
-        setSemanas(datos.weeklyLog);
-
+        setSemanas(datos.weeklyLog || []);
       } catch (error) {
         console.error("Error obteniendo las prácticas:", error);
       }
@@ -159,7 +164,7 @@ function Weeks() {
     alumno.fechaInicio
   );
   const semanasCompletas = semanas.filter(
-    (semana) => semana.estado === "Completado"
+    (semana) => semana.estado === "Completada"
   ).length
   // ======================================================
 
@@ -167,21 +172,24 @@ function Weeks() {
   // funcion puedeEditar
   function puedeEditar(semana) {
 
-    const estado =
-      obtenerEstadoSemana(semana);
-
-    if (estado === "Completado") {
+    const estado = obtenerEstadoSemana(semana);
+    // Completadas no se pueden modificar
+    if (estado === "Completada") {
       return false;
     }
 
+    // Anuladas tampoco
     if (estado === "Anulada") {
       return false;
     }
 
-    if (estado === "En curso") {
+    // Pendiente y En curso sí
+    if (
+      estado === "Pendiente" ||
+      estado === "En curso"
+    ) {
       return true;
     }
-
     return false;
   }
   // Con esta funcion:
@@ -196,7 +204,7 @@ function Weeks() {
   // ======================================================
   // Funcion Descargar Word
   function puedeDescargar(semana) {
-    return semana.status === "Completado";
+    return semana.status === "Completada";
   }
   // ======================================================
 
@@ -320,14 +328,52 @@ function Weeks() {
     // =========================================
     // SEMANA FINALIZADA
     // =========================================
-    if (semana.status) {
-      return semana.status;
+    if (semana.status === "Completada") {
+      return "Completada";
     }
     // =========================================
     // ESTADO POR DEFECTO
     // =========================================
     return "Pendiente";
   }
+  // ======================================================
+
+  // ======================================================
+  // funcion paa descargar word (Backend)
+  const descargarWord = async (idSemana) => {
+    try {
+      const token = localStorage.getItem("token");
+      const respuesta = await axios.get(
+        `http://localhost:3000/weeklyLogs/${idSemana}/word`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          responseType: "blob"
+        }
+      );
+
+      const archivo = new Blob(
+        [respuesta.data],
+        { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }
+      );
+
+      const url = window.URL.createObjectURL(archivo);
+
+      const enlace = document.createElement("a");
+      enlace.href = url;
+      enlace.download = `Semana_${idSemana}.docx`;
+
+      document.body.appendChild(enlace);
+      enlace.click();
+
+      enlace.remove();
+      window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+      console.error("Error descargando Word:", error);
+    }
+  };
   // ======================================================
 
   return (
@@ -377,25 +423,24 @@ function Weeks() {
               se utilizará la fecha actual.
             </p>
           </div>
-          {/* ============================= */}
-          {/* PERIODO DE PRÁCTICAS */}
-          {/* ============================= */}
-          <h2 className="titulo-periodo">
-            Periodo de prácticas
-          </h2>
-          <p className="texto-periodo">
-            <strong>Fecha inicio:</strong>{" "}
-            {formatearFecha(alumno.fechaInicio)}
-          </p>
-          <p className="texto-periodo">
-            <strong>Fecha fin:</strong>{" "}
-            {formatearFecha(alumno.fechaFin)}
-          </p>
         </div>
         {/* ============================= */}
         {/* PROGRESO */}
         {/* ============================= */}
         <div className="progreso-practicas">
+          <h2 className="titulo-progreso">
+            Progreso de prácticas
+          </h2>
+          <div className="fechas-progreso">
+            <p>
+              <strong>Fecha inicio:</strong>{" "}
+              {formatearFecha(alumno.fechaInicio)}
+            </p>
+            <p>
+              <strong>Fecha fin:</strong>{" "}
+              {formatearFecha(alumno.fechaFin)}
+            </p>
+          </div>
           <div className="progreso-fila">
             <div className="progreso-barra-contenedor">
               <div
@@ -411,10 +456,10 @@ function Weeks() {
             </span>
           </div>
           <p className="texto-progreso">
-            {semanasCompletas} de {semanas.length} semanas
-            completadas
-            {" "}
-            (Semana actual: {semanaActual})
+            {semanasCompletas} de {semanas.length} semanas completadas
+          </p>
+          <p className="semana-actual">
+            Semana actual: {semanaActual}
           </p>
         </div>
         {/* ============================= */}
@@ -451,7 +496,7 @@ function Weeks() {
                 estado.toLowerCase();
 
               const isCompletado =
-                estadoMinusculas === "completado";
+                estadoMinusculas === "completada";
 
               const isAnulada =
                 estadoMinusculas === "anulada";
@@ -562,10 +607,9 @@ function Weeks() {
                       {/* ============================= */}
 
                       <button
+                        disabled={!isCompletado}
+                        onClick={() => descargarWord(semana.week_id)}
                         className="btn-accion"
-                        disabled={
-                          !puedeDescargar(semana)
-                        }
                       >
                         Descargar
                       </button>
@@ -576,6 +620,104 @@ function Weeks() {
             })
           )}
         </div>
+        {/* ============================= */}
+        {/* FOOTER */}
+        {/* ============================= */}
+
+        <footer className="footer">
+
+          {/* IZQUIERDA */}
+          <div className="footer-col">
+
+            <h2 className="footer-logo">
+              <span className="naranja">ANMB</span> SOFTWARE
+            </h2>
+
+            <p>
+              Desarrollo de aplicaciones web para la gestión de prácticas,
+              formación y soluciones empresariales.
+            </p>
+
+          </div>
+
+          {/* CENTRO */}
+          <div className="footer-col footer-centro">
+
+            <h3>¿Necesitas ayuda?</h3>
+
+            <p>
+              Si tienes alguna duda, ponte en contacto con nosotros.
+            </p>
+            <a
+              className="btn-contactar"
+            >
+              <FaEnvelope />
+              Contactar
+            </a>
+          </div>
+          {/* DERECHA */}
+          <div className="footer-col">
+            <div className="equipo">
+              <h4>Backend</h4>
+              <p>Antonio Navarro</p>
+              <div className="redes">
+                <a
+                  href="https://github.com/anavarro81"
+                  target="_blank"
+                  rel="noreferrer"
+                  title="GitHub"
+                >
+                  <FaGithub />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/antonio-navarro-deldujo/"
+                  target="_blank"
+                  rel="noreferrer"
+                  title="LinkedIn"
+                >
+                  <FaLinkedin />
+                </a>
+                <a
+                  href="https://discord.gg/TU_INVITACION"
+                  target="_blank"
+                  rel="noreferrer"
+                  title="Discord"
+                >
+                  <FaDiscord />
+                </a>
+              </div>
+            </div>
+            <div className="equipo">
+              <h4>Frontend</h4>
+              <p>Matías Briceño</p>
+              <div className="redes">
+                <a
+                  href="https://github.com/matiasjulio5134"
+                  target="_blank"
+                  rel="noreferrer"
+                  title="GitHub"
+                >
+                  <FaGithub />
+                </a>
+                <a
+                  href="https://wa.me/643873510"
+                  target="_blank"
+                  rel="noreferrer"
+                  title="WhatsApp"
+                >
+                  <FaWhatsapp />
+                </a>
+                <a
+                  href="https://mail.google.com/mail/?view=cm&fs=1&to=matiasjulio5134@gmail.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <SiGmail />
+                </a>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   )
