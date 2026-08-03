@@ -15,7 +15,7 @@ function Weeks() {
   const [alumno, setAlumno] = useState({
     nombre: "",
     fechaInicio: "",
-    fechaFin: ""
+    fechaFin: "",
   });
   // =====================================================
 
@@ -37,8 +37,8 @@ function Weeks() {
 
         const response = await axios.get(url, {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         const datos = response.data;
@@ -47,11 +47,10 @@ function Weeks() {
         setAlumno({
           nombre: usuarioGuardado?.nombre || "",
           fechaInicio: datos.start_date,
-          fechaFin: datos.end_date
+          fechaFin: datos.end_date,
         });
 
         setSemanas(datos.weeklyLog);
-
       } catch (error) {
         console.error("Error obteniendo las prácticas:", error);
       }
@@ -67,6 +66,48 @@ function Weeks() {
   ];*/
   // ======================================================
 
+  const handleDowloadFile = async (weekId, weekNumber) => {
+    const token = localStorage.getItem("token");
+
+    const url = `http://localhost:3000/weekly-logs/${weekId}/download-word`;
+
+    try {
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: "blob",
+      });
+
+      // Extraer nombre de archivo desde Content-Disposition si está disponible
+      const disposition =
+        response.headers["content-disposition"] ||
+        response.headers["Content-Disposition"];
+
+      let filename = `weekly-log-${weekNumber || weekId}.docx`;
+      if (disposition) {
+        const fileNameMatch = disposition.match(
+          /filename\*=UTF-8''(.+)|filename\s*=\s*"?([^";]+)"?/,
+        );
+        if (fileNameMatch) {
+          filename = decodeURIComponent(fileNameMatch[1] || fileNameMatch[2]);
+        }
+      }
+
+      const blob = new Blob([response.data], { type: response.data.type });
+      const href = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = href;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(href);
+    } catch (error) {
+      console.error("Error descargado el archivo ", error);
+    }
+  };
+
   // ======================================================
   // Funcion para obtener iniciales del nombre del alumno
   function obtenerIniciales(nombre) {
@@ -78,10 +119,7 @@ function Weeks() {
       return palabras[0].substring(0, 2).toUpperCase();
     }
 
-    return (
-      palabras[0][0] +
-      palabras[palabras.length - 1][0]
-    ).toUpperCase();
+    return (palabras[0][0] + palabras[palabras.length - 1][0]).toUpperCase();
   }
   // ======================================================
 
@@ -111,9 +149,7 @@ function Weeks() {
     const duracionTotal = fin - inicio;
     const tiempoTrancurrido = hoy - inicio;
 
-    return Math.round(
-      (tiempoTrancurrido / duracionTotal) * 100
-    );
+    return Math.round((tiempoTrancurrido / duracionTotal) * 100);
   }
   // ======================================================
 
@@ -137,9 +173,7 @@ function Weeks() {
 
     const diferencia = hoy - inicio;
 
-    const diasTranscurridos = Math.floor(
-      diferencia / (1000 * 60 * 60 * 24)
-    );
+    const diasTranscurridos = Math.floor(diferencia / (1000 * 60 * 60 * 24));
 
     if (diasTranscurridos < 0) {
       return 0;
@@ -151,24 +185,17 @@ function Weeks() {
 
   // ======================================================
   // calcular datos de progreso
-  const progreso = calcularProgreso(
-    alumno.fechaInicio,
-    alumno.fechaFin
-  );
-  const semanaActual = calcularSemanaActual(
-    alumno.fechaInicio
-  );
+  const progreso = calcularProgreso(alumno.fechaInicio, alumno.fechaFin);
+  const semanaActual = calcularSemanaActual(alumno.fechaInicio);
   const semanasCompletas = semanas.filter(
-    (semana) => semana.estado === "Completado"
-  ).length
+    (semana) => semana.estado === "Completado",
+  ).length;
   // ======================================================
 
   // ======================================================
   // funcion puedeEditar
   function puedeEditar(semana) {
-
-    const estado =
-      obtenerEstadoSemana(semana);
+    const estado = obtenerEstadoSemana(semana);
 
     if (estado === "Completado") {
       return false;
@@ -217,15 +244,11 @@ function Weeks() {
     return fechaObjeto.toLocaleDateString("es-ES", {
       day: "2-digit",
       month: "2-digit",
-      year: "numeric"
+      year: "numeric",
     });
   }
   function fechaFueraDePracticas() {
-    if (
-      !fechaSimulada ||
-      !alumno.fechaInicio ||
-      !alumno.fechaFin
-    ) {
+    if (!fechaSimulada || !alumno.fechaInicio || !alumno.fechaFin) {
       return false;
     }
 
@@ -237,20 +260,14 @@ function Weeks() {
 
     // Si la fecha seleccionada es anterior al inicio
     // O posterior al final
-    return (
-      fechaSimulada < fechaInicio ||
-      fechaSimulada > fechaFin
-    );
+    return fechaSimulada < fechaInicio || fechaSimulada > fechaFin;
   }
   // ======================================================
 
   // ======================================================
   // funcion cerrar aviso
   function cerrarAviso(weekId) {
-    setAvisosCerrados((avisos) => [
-      ...avisos,
-      weekId
-    ]);
+    setAvisosCerrados((avisos) => [...avisos, weekId]);
   }
   // ======================================================
 
@@ -271,39 +288,29 @@ function Weeks() {
     // =========================================
     // COMPROBAR QUE EXISTAN LAS FECHAS
     // =========================================
-    if (
-      !alumno.fechaInicio ||
-      !alumno.fechaFin
-    ) {
+    if (!alumno.fechaInicio || !alumno.fechaFin) {
       return semana.status || "Pendiente";
     }
     // =========================================
     // FECHAS
     // =========================================
-    const fechaInicioPracticas =
-      alumno.fechaInicio.substring(0, 10);
+    const fechaInicioPracticas = alumno.fechaInicio.substring(0, 10);
 
-    const fechaInicioSemana =
-      semana.start_date.substring(0, 10);
+    const fechaInicioSemana = semana.start_date.substring(0, 10);
 
-    const fechaFinSemana =
-      semana.end_date.substring(0, 10);
+    const fechaFinSemana = semana.end_date.substring(0, 10);
 
     // =========================================
     // ANTES DE COMENZAR LAS PRÁCTICAS
     // =========================================
-    if (
-      fechaSeleccionada < fechaInicioPracticas
-    ) {
+    if (fechaSeleccionada < fechaInicioPracticas) {
       return "Anulada";
     }
 
     // =========================================
     // SEMANA FUTURA
     // =========================================
-    if (
-      fechaSeleccionada < fechaInicioSemana
-    ) {
+    if (fechaSeleccionada < fechaInicioSemana) {
       return "Anulada";
     }
 
@@ -337,17 +344,12 @@ function Weeks() {
       {/* ============================= */}
       <header className="cabecera">
         <div className="encabezado">
-          <h2 className="logo">
-            Logo Empresa
-          </h2>
+          <h2 className="logo">Logo Empresa</h2>
           <div className="iniciales-container">
             <span className="avatar-circulo">
               {obtenerIniciales(alumno.nombre)}
             </span>
-            <button
-              className="btn-cerrar-sesion"
-              onClick={cerrarSesion}
-            >
+            <button className="btn-cerrar-sesion" onClick={cerrarSesion}>
               Cerrar sesión
             </button>
           </div>
@@ -362,34 +364,25 @@ function Weeks() {
         {/* ============================= */}
         <div className="info-periodo">
           <div className="fecha-prueba">
-            <h3>
-              Fecha simulada para pruebas
-            </h3>
+            <h3>Fecha simulada para pruebas</h3>
             <input
               type="date"
               value={fechaSimulada}
-              onChange={(e) =>
-                setFechaSimulada(e.target.value)
-              }
+              onChange={(e) => setFechaSimulada(e.target.value)}
             />
             <p>
-              Si no seleccionas ninguna fecha,
-              se utilizará la fecha actual.
+              Si no seleccionas ninguna fecha, se utilizará la fecha actual.
             </p>
           </div>
           {/* ============================= */}
           {/* PERIODO DE PRÁCTICAS */}
           {/* ============================= */}
-          <h2 className="titulo-periodo">
-            Periodo de prácticas
-          </h2>
+          <h2 className="titulo-periodo">Periodo de prácticas</h2>
           <p className="texto-periodo">
-            <strong>Fecha inicio:</strong>{" "}
-            {formatearFecha(alumno.fechaInicio)}
+            <strong>Fecha inicio:</strong> {formatearFecha(alumno.fechaInicio)}
           </p>
           <p className="texto-periodo">
-            <strong>Fecha fin:</strong>{" "}
-            {formatearFecha(alumno.fechaFin)}
+            <strong>Fecha fin:</strong> {formatearFecha(alumno.fechaFin)}
           </p>
         </div>
         {/* ============================= */}
@@ -401,28 +394,21 @@ function Weeks() {
               <div
                 className="progreso-barra"
                 style={{
-                  "--progreso": `${progreso}%`
+                  "--progreso": `${progreso}%`,
                 }}
-              >
-              </div>
+              ></div>
             </div>
-            <span className="progreso-porcentaje">
-              {progreso}%
-            </span>
+            <span className="progreso-porcentaje">{progreso}%</span>
           </div>
           <p className="texto-progreso">
-            {semanasCompletas} de {semanas.length} semanas
-            completadas
-            {" "}
-            (Semana actual: {semanaActual})
+            {semanasCompletas} de {semanas.length} semanas completadas (Semana
+            actual: {semanaActual})
           </p>
         </div>
         {/* ============================= */}
         {/* TÍTULO LISTADO */}
         {/* ============================= */}
-        <h2 className="titulo-seccion">
-          Listado de semanas
-        </h2>
+        <h2 className="titulo-seccion">Listado de semanas</h2>
         {/* ============================= */}
         {/* LISTADO DE SEMANAS */}
         {/* ============================= */}
@@ -431,8 +417,7 @@ function Weeks() {
           {/* SI LA FECHA ES POSTERIOR AL PERIODO */}
           {/* ====================================== */}
           {fechaFueraDePracticas() &&
-            fechaSimulada >
-            alumno.fechaFin.substring(0, 10) ? (
+          fechaSimulada > alumno.fechaFin.substring(0, 10) ? (
             <div className="mensaje-sin-practicas">
               No hay prácticas asignadas para esta fecha.
             </div>
@@ -441,60 +426,52 @@ function Weeks() {
             /* MOSTRAR SEMANAS */
             /* ====================================== */
             semanas.map((semana) => {
-              {/* ====================================== */ }
-              {/* OBTENER ESTADO VISUAL */ }
-              {/* ====================================== */ }
-              const estado =
-                obtenerEstadoSemana(semana) || "";
+              {
+                /* ====================================== */
+              }
+              {
+                /* OBTENER ESTADO VISUAL */
+              }
+              {
+                /* ====================================== */
+              }
+              const estado = obtenerEstadoSemana(semana) || "";
 
-              const estadoMinusculas =
-                estado.toLowerCase();
+              const estadoMinusculas = estado.toLowerCase();
 
-              const isCompletado =
-                estadoMinusculas === "completado";
+              const isCompletado = estadoMinusculas === "completado";
 
-              const isAnulada =
-                estadoMinusculas === "anulada";
+              const isAnulada = estadoMinusculas === "anulada";
 
-              const isEnCurso =
-                estadoMinusculas === "en curso";
-              {/* ====================================== */ }
-              {/* FECHAS PARA EL AVISO */ }
-              {/* ====================================== */ }
-              const fechaFinSemana =
-                new Date(semana.end_date);
+              const isEnCurso = estadoMinusculas === "en curso";
+              {
+                /* ====================================== */
+              }
+              {
+                /* FECHAS PARA EL AVISO */
+              }
+              {
+                /* ====================================== */
+              }
+              const fechaFinSemana = new Date(semana.end_date);
 
-              const fechaComprobar =
-                fechaSimulada
-                  ? new Date(
-                    fechaSimulada + "T23:59:59"
-                  )
-                  : new Date();
+              const fechaComprobar = fechaSimulada
+                ? new Date(fechaSimulada + "T23:59:59")
+                : new Date();
 
-              const semanaTerminada =
-                fechaComprobar > fechaFinSemana;
+              const semanaTerminada = fechaComprobar > fechaFinSemana;
 
               const mostrarAviso =
-                semanaTerminada &&
-                !isCompletado &&
-                !isAnulada;
+                semanaTerminada && !isCompletado && !isAnulada;
               return (
-                <div
-                  key={semana.week_id}
-                  className="contenedor-semana"
-                >
+                <div key={semana.week_id} className="contenedor-semana">
                   {/* ============================= */}
                   {/* AVISO DE SEMANA */}
                   {/* ============================= */}
                   {mostrarAviso && (
                     <div className="aviso-semana">
-                      <span>
-                        No olvides completar la semana
-                      </span>
-                      <button
-                        className="cerrar-aviso"
-                        type="button"
-                      >
+                      <span>No olvides completar la semana</span>
+                      <button className="cerrar-aviso" type="button">
                         ×
                       </button>
                     </div>
@@ -511,15 +488,8 @@ function Weeks() {
                         Semana {semana.week_number}
                       </h3>
                       <p className="semana-fechas">
-                        Desde{" "}
-                        {formatearFecha(
-                          semana.start_date
-                        )}
-                        {" "}
-                        hasta{" "}
-                        {formatearFecha(
-                          semana.end_date
-                        )}
+                        Desde {formatearFecha(semana.start_date)} hasta{" "}
+                        {formatearFecha(semana.end_date)}
                       </p>
                     </div>
                     {/* ============================= */}
@@ -530,14 +500,15 @@ function Weeks() {
                       {/* ESTADO */}
                       {/* ============================= */}
                       <span
-                        className={`estado-badge ${isCompletado
-                          ? "badge-completado"
-                          : isAnulada
-                            ? "badge-anulada"
-                            : isEnCurso
-                              ? "badge-en-curso"
-                              : "badge-pendiente"
-                          }`}
+                        className={`estado-badge ${
+                          isCompletado
+                            ? "badge-completado"
+                            : isAnulada
+                              ? "badge-anulada"
+                              : isEnCurso
+                                ? "badge-en-curso"
+                                : "badge-pendiente"
+                        }`}
                       >
                         {estado}
                       </span>
@@ -546,14 +517,8 @@ function Weeks() {
                       {/* ============================= */}
                       <button
                         className="btn-accion"
-                        onClick={() =>
-                          editarSemana(
-                            semana.week_number
-                          )
-                        }
-                        disabled={
-                          !puedeEditar(semana)
-                        }
+                        onClick={() => editarSemana(semana.week_number)}
+                        disabled={!puedeEditar(semana)}
                       >
                         Editar
                       </button>
@@ -563,8 +528,9 @@ function Weeks() {
 
                       <button
                         className="btn-accion"
-                        disabled={
-                          !puedeDescargar(semana)
+                        disabled={false}
+                        onClick={() =>
+                          handleDowloadFile(semana.week_id, semana.week_number)
                         }
                       >
                         Descargar
@@ -578,6 +544,6 @@ function Weeks() {
         </div>
       </div>
     </div>
-  )
+  );
 }
 export default Weeks;
