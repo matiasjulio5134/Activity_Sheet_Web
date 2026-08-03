@@ -66,7 +66,7 @@ function Weeks() {
   ];*/
   // ======================================================
 
-  const handleDowloadFile = async (weekId, weekNumber) => {
+  const handleDowloadFile = async (weekId) => {
     const token = localStorage.getItem("token");
 
     const url = `http://localhost:3000/weekly-logs/${weekId}/download-word`;
@@ -84,13 +84,15 @@ function Weeks() {
         response.headers["content-disposition"] ||
         response.headers["Content-Disposition"];
 
-      let filename = `weekly-log-${weekNumber || weekId}.docx`;
+      console.log('disposition >> ', disposition);
+      
+      
+
+      let filename = "hoja_actividad.docx";
       if (disposition) {
-        const fileNameMatch = disposition.match(
-          /filename\*=UTF-8''(.+)|filename\s*=\s*"?([^";]+)"?/,
-        );
+        const fileNameMatch = disposition.match(/filename\s*=\s*"?([^";]+)"?/);
         if (fileNameMatch) {
-          filename = decodeURIComponent(fileNameMatch[1] || fileNameMatch[2]);
+          filename = fileNameMatch[1];
         }
       }
 
