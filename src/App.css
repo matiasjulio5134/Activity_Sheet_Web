@@ -234,7 +234,33 @@
 .btn-cerrar-sesion:hover {
   background-color: #0090b0;
 }
+/*==================================*/
+/* BOTONES AYUDA */
+/*==================================*/
+.botones-ayuda {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
 
+
+.btn-estados {
+  padding: 12px 24px;
+  border-radius: 30px;
+  border: 2px solid #f39c12;
+  background-color: transparent;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+
+.btn-estados:hover {
+  background-color: #f39c12;
+}
 /*================================*/
 /* RECUADRO DEL PROGRESO*/
 /*================================*/
@@ -256,6 +282,7 @@
 .fechas-progreso p {
   margin: 5px;
 }
+
 .semana-actual {
   font-weight: bold;
   margin-top: 10px;
@@ -797,7 +824,8 @@ BOTONES FINALES
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  padding: 40px 60px;
+  gap: 45px;
+  padding: 45px 70px;
   margin-top: 50px;
   border-top: 4px solid #f39c12;
 }
@@ -809,13 +837,78 @@ BOTONES FINALES
 .footer-col {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  width: 30%;
+  gap: 15px;
+  width: 25%;
 }
 
 .footer-centro {
   align-items: center;
   text-align: center;
+  padding: 0 15px;
+}
+
+.contacto-soporte {
+  display: flex;
+  flex-direction: column;
+
+  gap: 25px;
+
+  margin-top: 15px;
+}
+
+.contacto-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.icono-contacto {
+  font-size: 25px;
+  color: #f39c12;
+}
+
+.contacto-item h4 {
+  margin: 0;
+  color: white;
+}
+
+.contacto-item a {
+  color: #d8d8d8;
+  text-decoration: none;
+}
+
+.contacto-item a:hover {
+  color: #f39c12;
+}
+/* BOTON CONTACTAR SOPORTE */
+
+.btn-contactar {
+  margin-top: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 12px 25px;
+
+  background-color: #f39c12;
+  color: white;
+
+  border-radius: 30px;
+  text-decoration: none;
+
+  font-weight: bold;
+  cursor: pointer;
+
+  width: fit-content;
+
+  transition: 0.3s;
+}
+
+
+.btn-contactar:hover {
+  background-color: #ffb133;
+  transform: scale(1.05);
 }
 
 /*==================================*/
@@ -839,25 +932,47 @@ BOTONES FINALES
 }
 
 /*==================================*/
-/* BOTÓN CONTACTAR */
+/* CONTACTO SOPORTE */
 /*==================================*/
 
-.btn-contactar {
-  margin-top: 10px;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 24px;
-  background-color: #f39c12;
-  color: white;
-  text-decoration: none;
-  border-radius: 30px;
-  font-weight: bold;
-  transition: 0.3s;
+.contacto-soporte {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 15px;
 }
 
-.btn-contactar:hover {
-  background-color: #ffb133;
+.contacto-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icono-contacto {
+  font-size: 26px;
+  color: #f39c12;
+}
+
+.contacto-item div {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.contacto-item h4 {
+  margin: 0;
+  color: white;
+  font-size: 16px;
+}
+
+.contacto-item a {
+  color: #d8d8d8;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.contacto-item a:hover {
+  color: #f39c12;
 }
 
 /*==================================*/
@@ -943,9 +1058,12 @@ BOTONES FINALES
     width: 100%;
   }
 
-  .btn-contactar {
-    width: 180px;
+  .contacto-item {
     justify-content: center;
+  }
+
+  .contacto-item div {
+    text-align: center;
   }
 
   .equipo {
@@ -1043,4 +1161,52 @@ BOTONES FINALES
 
 .modal-actions .cancel-button:hover {
   background-color: #c94444;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+
+.modal-estados {
+  background: white;
+  width: 450px;
+  max-width: 90%;
+  padding: 30px;
+  border-radius: 20px;
+  color: #173e52;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  position: relative;
+}
+
+
+.estado-modal {
+  margin-top: 15px;
+  padding: 15px;
+  background: #f4f6f8;
+  border-radius: 12px;
+}
+
+.estado-modal h3 {
+  margin: 0 0 5px;
+  color: #173e52;
+}
+
+
+.cerrar-modal {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
 }
