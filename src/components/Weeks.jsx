@@ -179,29 +179,29 @@ function Weeks() {
     const estado = obtenerEstadoSemana(semana);
 
     const fechaSeleccionada = fechaSimulada
-      ? fechaSimulada
-      : new Date().toISOString().substring(0, 10);
+      ? new Date(fechaSimulada)
+      : new Date();
 
-    const fechaInicioSemana = semana.start_date.substring(0, 10);
+    const fechaInicioSemana = new Date(semana.start_date);
 
-    // Si la semana todavía no ha empezado
     if (fechaSeleccionada < fechaInicioSemana) {
       return false;
     }
 
-    // Si está completada no se puede editar
     if (estado === "Completada") {
       return false;
     }
 
-    // Semana actual o pendiente anterior editable
+    if (estado === "Anulada") {
+      return false;
+    }
+
     if (
       estado === "Pendiente" ||
       estado === "En curso"
     ) {
       return true;
     }
-
     return false;
   }
   // Con esta funcion:
@@ -284,6 +284,7 @@ function Weeks() {
     // usamos esa fecha.
     // Si no hay fecha seleccionada,
     // usamos la fecha actual.
+
     const fechaSeleccionada = fechaSimulada
       ? fechaSimulada
       : new Date().toISOString().substring(0, 10);
@@ -624,20 +625,18 @@ function Weeks() {
                             semana.week_number
                           )
                         }
-                        disabled={
-                          !puedeEditar(semana)
-                        }
+                        disabled={!puedeEditar(semana)}
                       >
                         Editar
                       </button>
                       {/* ============================= */}
-                      {/* BOTÓN DESCARGAR */}
+                      {/* BOTÓN DESCARGAR WORD */}
                       {/* ============================= */}
 
                       <button
+                        className="btn-accion"
                         disabled={!isCompletado}
                         onClick={() => descargarWord(semana.week_id)}
-                        className="btn-accion"
                       >
                         Descargar
                       </button>

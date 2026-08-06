@@ -182,15 +182,25 @@ function EditWeek() {
 
     // Funcion aceptar finalizar semana
     async function confirmarFinalizar() {
-        console.log("Entrando en finalizar semana");
 
-        setMostrarModalFinalizar(false);
+        // comprobar tareas vacías
+        const tareasVacias = dias.some(dia =>
+            dia.tareas.some(tarea => tarea.texto.trim() === "")
+        );
+
+        if (tareasVacias) {
+            alert("Completa todas las tareas antes de finalizar la semana");
+            return;
+        }
         try {
             const token = localStorage.getItem("token");
-
+            console.log("Semana:", numero);
+            console.log("Datos enviados:", dias);
+            console.log("Token:", token);
+            // Guardar tareas
             await axios.put(
-                `http://localhost:3000/weeklyLogs/${numero}/completed`,
-                {},
+                `http://localhost:3000/weekly-logs/${numero}`,
+                dias,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -198,8 +208,21 @@ function EditWeek() {
                 }
             );
 
+            // Cambiar estado a completada
+            await axios.put(
+                `http://localhost:3000/weekly-logs/${numero}/completed`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            setMostrarModalFinalizar(false);
             navigate("/weeks");
+
         } catch (error) {
+
             console.error(
                 "Error finalizando semana:",
                 error
@@ -306,51 +329,6 @@ function EditWeek() {
     }
     // =================================================
 
-    // =================================================
-    // Funcion finalizar semana
-    async function finalizarSemana() {
-        // comprobar tareas vacias
-        const tareasVacias = dias.some(dia =>
-            dia.tareas.some(tarea => tarea.texto.trim() === "")
-        );
-
-        if (tareasVacias) {
-            alert("Completa todas las tareas antes de finalizar la semana");
-            return;
-        }
-        try {
-            const token = localStorage.getItem("token");
-            // Guardar tareas
-            await axios.put(
-                `http://localhost:3000/weeklyLogs/${numero}`,
-                {
-                    dias: dias
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-            // Cambiar estado a completada
-            await axios.put(
-                `http://localhost:3000/weeklyLogs/${numero}/completed`,
-                {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
-            navigate("/weeks");
-        } catch (error) {
-            console.error(
-                "Error finalizando semana:",
-                error
-            );
-        }
-    }
-    // =================================================
     return (
         <div className="pantalla-practicas">
 
