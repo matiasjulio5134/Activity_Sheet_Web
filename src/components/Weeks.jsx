@@ -6,7 +6,6 @@ import axios from "axios";
 
 function Weeks() {
   const navigate = useNavigate();
-  const [fechaSimulada, setFechaSimulada] = useState("");
   const [avisosCerrados, setAvisosCerrados] = useState([]);
   const [mostrarEstados, setMostrarEstados] = useState(false);
 
@@ -30,11 +29,7 @@ function Weeks() {
       try {
         const token = localStorage.getItem("token");
 
-        let url = "http://localhost:3000/internships/my-internship";
-
-        if (fechaSimulada) {
-          url += `?mockDate=${fechaSimulada}`;
-        }
+        const url = "http://localhost:3000/internships/my-internship";
 
         const response = await axios.get(url, {
           headers: {
@@ -44,15 +39,6 @@ function Weeks() {
 
         const datos = response.data;
 
-        console.log(
-          "ESTADOS DE LAS SEMANAS:",
-          datos.weeklyLog.map((semana) => ({
-            semana: semana.week_number,
-            id: semana.week_id,
-            status: semana.status,
-            estado: semana.estado
-          }))
-        );
         setAlumno({
           nombre: usuarioGuardado?.nombre || "",
           fechaInicio: datos.start_date,
@@ -66,7 +52,7 @@ function Weeks() {
     };
 
     obtenerPracticas();
-  }, [fechaSimulada]);
+  }, []);
 
   // ======================================================
   // Funcion para obtener iniciales del nombre del alumno
@@ -98,9 +84,7 @@ function Weeks() {
     const inicio = convertirFecha(fechaInicio);
     const fin = convertirFecha(fechaFin);
 
-    const hoy = fechaSimulada
-      ? new Date(fechaSimulada + "T00:00:00")
-      : new Date();
+    const hoy = new Date();
 
     if (hoy < inicio) {
       return 0;
@@ -133,9 +117,7 @@ function Weeks() {
       fechaInicio.substring(0, 10) + "T00:00:00"
     );
 
-    const hoy = fechaSimulada
-      ? new Date(fechaSimulada + "T00:00:00")
-      : new Date();
+    const hoy = new Date();
 
     const diferencia = hoy - inicio;
 
@@ -172,10 +154,7 @@ function Weeks() {
   function puedeEditar(semana) {
     const estado = obtenerEstadoSemana(semana);
 
-    const fechaSeleccionada = fechaSimulada
-      ? new Date(fechaSimulada)
-      : new Date();
-
+    const fechaSeleccionada = new Date();
     const fechaInicioSemana = new Date(semana.start_date);
 
     if (fechaSeleccionada < fechaInicioSemana) {
@@ -227,24 +206,6 @@ function Weeks() {
     });
   }
 
-  function fechaFueraDePracticas() {
-    if (
-      !fechaSimulada ||
-      !alumno.fechaInicio ||
-      !alumno.fechaFin
-    ) {
-      return false;
-    }
-
-    const fechaInicio = alumno.fechaInicio.substring(0, 10);
-    const fechaFin = alumno.fechaFin.substring(0, 10);
-
-    return (
-      fechaSimulada < fechaInicio ||
-      fechaSimulada > fechaFin
-    );
-  }
-
   // ======================================================
   // Funcion cerrar aviso
   function cerrarAviso(weekId) {
@@ -257,9 +218,8 @@ function Weeks() {
   // ======================================================
   // Funcion obtener Estado Semana
   function obtenerEstadoSemana(semana) {
-    const fechaSeleccionada = fechaSimulada
-      ? fechaSimulada
-      : new Date().toISOString().substring(0, 10);
+    const fechaSeleccionada =
+      new Date().toISOString().substring(0, 10);
 
     if (!alumno.fechaInicio || !alumno.fechaFin) {
       return semana.status || "Pendiente";
@@ -392,31 +352,6 @@ function Weeks() {
       <div className="contenedor-principal">
 
         {/* ============================= */}
-        {/* FECHA SIMULADA */}
-        {/* ============================= */}
-
-        <div className="info-periodo">
-          <div className="fecha-prueba">
-            <h3>
-              Fecha simulada para pruebas
-            </h3>
-
-            <input
-              type="date"
-              value={fechaSimulada}
-              onChange={(e) =>
-                setFechaSimulada(e.target.value)
-              }
-            />
-
-            <p>
-              Si no seleccionas ninguna fecha,
-              se utilizará la fecha actual.
-            </p>
-          </div>
-        </div>
-
-        {/* ============================= */}
         {/* PROGRESO */}
         {/* ============================= */}
 
@@ -476,23 +411,7 @@ function Weeks() {
 
         <div className="listado-semanas">
 
-          {/* ====================================== */}
-          {/* SI LA FECHA ES POSTERIOR AL PERIODO */}
-          {/* ====================================== */}
-
-          {fechaFueraDePracticas() &&
-            fechaSimulada >
-            alumno.fechaFin.substring(0, 10) ? (
-            <div className="mensaje-sin-practicas">
-              No hay prácticas asignadas para esta fecha.
-            </div>
-          ) : (
-
-            /* ====================================== */
-            /* MOSTRAR SEMANAS */
-            /* ====================================== */
-
-            semanas.map((semana) => {
+            {semanas.map((semana) => {
 
               /* ====================================== */
               /* OBTENER ESTADO VISUAL */
@@ -520,12 +439,7 @@ function Weeks() {
               const fechaFinSemana =
                 new Date(semana.end_date);
 
-              const fechaComprobar =
-                fechaSimulada
-                  ? new Date(
-                    fechaSimulada + "T23:59:59"
-                  )
-                  : new Date();
+              const fechaComprobar = new Date();
 
               const semanaTerminada =
                 fechaComprobar > fechaFinSemana;
@@ -647,8 +561,7 @@ function Weeks() {
                   </div>
                 </div>
               );
-            })
-          )}
+          })}
         </div>
 
         {/* ============================= */}
