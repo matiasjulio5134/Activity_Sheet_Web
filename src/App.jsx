@@ -9,7 +9,7 @@ function App() {
             <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path="/weeks" element={<Weeks />} />
-                <Route path="/editweek/:numero" element={<EditWeek />}></Route>
+                <Route path="/editweek/:numero/:weekId" element={<EditWeek />}></Route>
             </Routes>
         </BrowserRouter>
     )
