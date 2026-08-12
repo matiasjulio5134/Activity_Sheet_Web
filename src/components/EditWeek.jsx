@@ -388,7 +388,6 @@ function EditWeek() {
     }
 
     // =================================================
-    // Render
     return (
         <div className="pantalla-practicas">
 
