@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from '../utils/axios';
-import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
-
+import { FaGithub, FaLinkedin, FaEnvelope, FaWhatsapp, FaPhone, FaLock, FaUser } from "react-icons/fa";
 function Login() {
     const [dni, setDni] = useState('');
     const [password, setPassword] = useState('');
@@ -155,7 +154,7 @@ function Login() {
                         type="button"
                         className="password-toggle"
                         onClick={togglePassword}
-                    >{isPasswordVisible ? <FaEyeSlash /> : <FaEye />}
+                    >{isPasswordVisible ? <FaEyeSlash /> : <FaEnvelope />}
                     </button>
                     </div>
                     {errorPassword && (
