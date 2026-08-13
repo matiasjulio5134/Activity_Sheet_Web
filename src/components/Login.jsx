@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from '../utils/axios';
-import { FaGithub, FaLinkedin, FaEnvelope, FaWhatsapp, FaPhone, FaLock, FaUser } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaEnvelope, FaWhatsapp, FaPhone, FaLock, FaUser, FaEye, FaEyeSlash } from "react-icons/fa";
 function Login() {
     const [dni, setDni] = useState('');
     const [password, setPassword] = useState('');
@@ -117,20 +117,20 @@ function Login() {
             <div className="login-card">
                 <h2>Acceso Alumnos</h2>
                 <p className="login-subtitle">
-                    Accede con tu DNI y contraseña.    
+                    Accede con tu DNI y contraseña.
                 </p>
                 <div className="form-group">
                     <label>DNI:</label>
                     <div className="input-container">
                         <FaUser className="input-icon" />
-                    <input 
-                        className="login-input"
-                        type="text"
-                        value={dni}
-                        onChange={(e) => setDni(e.target.value)}
-                        placeholder="12345678A"
-                        required
-                    />
+                        <input
+                            className="login-input"
+                            type="text"
+                            value={dni}
+                            onChange={(e) => setDni(e.target.value)}
+                            placeholder="12345678A"
+                            required
+                        />
                     </div>
                     {errorDni && (
                         <p className="error">{errorDni}</p>
@@ -141,21 +141,22 @@ function Login() {
                     <label>Contraseña:</label>
                     <div className="input-container">
                         <FaLock className="input-icon" />
-                    <input
-                        className="login-input"
-                        type={isPasswordVisible ? "text" : "password"}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="************"
-                        required
-                    />
-                    {/* Botón mostrar/ocultar contraseña */}
-                    <button
-                        type="button"
-                        className="password-toggle"
-                        onClick={togglePassword}
-                    >{isPasswordVisible ? <FaEyeSlash /> : <FaEnvelope />}
-                    </button>
+                        <input
+                            className="login-input"
+                            type={isPasswordVisible ? "text" : "password"}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="************"
+                            required
+                        />
+                        {/* Botón mostrar/ocultar contraseña */}
+                        <button
+                            type="button"
+                            className="password-toggle"
+                            onClick={togglePassword}
+                        >
+                            {isPasswordVisible ? <FaEyeSlash /> : <FaEye />}
+                        </button>
                     </div>
                     {errorPassword && (
                         <p className="error">{errorPassword}</p>
