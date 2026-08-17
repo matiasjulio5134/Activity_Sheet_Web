@@ -234,6 +234,7 @@
 .btn-cerrar-sesion:hover {
   background-color: #0090b0;
 }
+
 /*==================================*/
 /* BOTONES AYUDA */
 /*==================================*/
@@ -261,6 +262,7 @@
 .btn-estados:hover {
   background-color: #f39c12;
 }
+
 /*================================*/
 /* RECUADRO DEL PROGRESO*/
 /*================================*/
@@ -460,16 +462,17 @@
 /* ESTADO: PENDIENTE */
 /* ================================= */
 .badge-pendiente {
-  background-color: #d99400;
+  background-color: orange;
+  color: white;
 }
 
 /* ================================= */
 /* ESTADO: EN CURSO */
 /* ================================= */
 .badge-en-curso {
-  background-color: #0da9c7;
+  background-color: blue;
+  color: white;
 }
-
 /* ================================= */
 /* ESTADO: COMPLETADO */
 /* ================================= */
@@ -478,11 +481,12 @@
 }
 
 /* ================================= */
-/* ESTADO: ANULADA */
+/* ESTADO: PENDIENTE - ROJO */
 /* ================================= */
 
-.badge-anulada {
-  background-color: #dc3545;
+.badge-pendiente-rojo {
+  background-color: red;
+  color: white;
 }
 
 /* Botones de Acción (Editar / Descargar) */
@@ -880,6 +884,7 @@ BOTONES FINALES
 .contacto-item a:hover {
   color: #f39c12;
 }
+
 /* BOTON CONTACTAR SOPORTE */
 
 .btn-contactar {
@@ -1085,6 +1090,7 @@ BOTONES FINALES
   }
 
 }
+
 /* ================================= */
 /* RESPÔNSE MOVIL EDITWEEK */
 /* ================================= */
@@ -1374,13 +1380,14 @@ BOTONES FINALES
 .modal-actions .cancel-button:hover {
   background-color: #c94444;
 }
+
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1395,7 +1402,7 @@ BOTONES FINALES
   padding: 30px;
   border-radius: 20px;
   color: #173e52;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
   position: relative;
 }
 

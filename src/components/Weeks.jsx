@@ -234,7 +234,9 @@ function Weeks() {
     const fechaFinSemana =
       semana.end_date.substring(0, 10);
 
-    // La semana completada tiene prioridad
+    // ==========================================
+    // SEMANA COMPLETADA
+    // ==========================================
     if (
       semana.status === "Completado" ||
       semana.status === "Completada"
@@ -242,17 +244,23 @@ function Weeks() {
       return "Completada";
     }
 
-    // Antes de comenzar las prácticas
+    // ==========================================
+    // ANTES DE COMENZAR LAS PRÁCTICAS
+    // ==========================================
     if (fechaSeleccionada < fechaInicioPracticas) {
       return "Pendiente";
     }
 
-    // Semana futura
+    // ==========================================
+    // SEMANA FUTURA
+    // ==========================================
     if (fechaSeleccionada < fechaInicioSemana) {
       return "Pendiente";
     }
 
-    // Semana en curso
+    // ==========================================
+    // SEMANA ACTUAL
+    // ==========================================
     if (
       fechaSeleccionada >= fechaInicioSemana &&
       fechaSeleccionada <= fechaFinSemana
@@ -260,9 +268,15 @@ function Weeks() {
       return "En curso";
     }
 
+    // ==========================================
+    // SEMANA QUE TERMINÓ PERO NO SE FINALIZÓ
+    // ==========================================
+    if (fechaSeleccionada > fechaFinSemana) {
+      return "En curso";
+    }
+
     return "Pendiente";
   }
-
   // ======================================================
   // Funcion para descargar Word (Backend)
   const descargarWord = async (weekId) => {
@@ -411,156 +425,162 @@ function Weeks() {
 
         <div className="listado-semanas">
 
-            {semanas.map((semana) => {
+          {semanas.map((semana) => {
 
-              /* ====================================== */
-              /* OBTENER ESTADO VISUAL */
-              /* ====================================== */
+            /* ====================================== */
+            /* OBTENER ESTADO VISUAL */
+            /* ====================================== */
 
-              const estado =
-                obtenerEstadoSemana(semana) || "";
+            const estado =
+              obtenerEstadoSemana(semana) || "";
 
-              const estadoMinusculas =
-                estado.toLowerCase();
+            const estadoMinusculas =
+              estado.toLowerCase();
 
-              const isCompletado =
-                estadoMinusculas === "completada";
+            const isCompletado =
+              estadoMinusculas === "completada";
 
-              const isAnulada =
-                estadoMinusculas === "anulada";
+            const isEnCurso =
+              estadoMinusculas === "en curso";
 
-              const isEnCurso =
-                estadoMinusculas === "en curso";
+            const fechaHoy = new Date();
+            fechaHoy.setHours(0, 0, 0, 0);
 
-              /* ====================================== */
-              /* FECHAS PARA EL AVISO */
-              /* ====================================== */
+            const fechaInicioSemana =
+              new Date(semana.start_date);
+            fechaInicioSemana.setHours(0, 0, 0, 0);
 
-              const fechaFinSemana =
-                new Date(semana.end_date);
+            const isFutura =
+              fechaHoy < fechaInicioSemana;
+            /* ====================================== */
+            /* FECHAS PARA EL AVISO */
+            /* ====================================== */
 
-              const fechaComprobar = new Date();
+            const fechaFinSemana =
+              new Date(semana.end_date);
 
-              const semanaTerminada =
-                fechaComprobar > fechaFinSemana;
+            const fechaComprobar = new Date();
 
-              const mostrarAviso =
-                semanaTerminada &&
-                !isCompletado &&
-                !isAnulada &&
-                !avisosCerrados.includes(semana.week_id);
+            const semanaTerminada =
+              fechaComprobar > fechaFinSemana;
 
-              return (
-                <div
-                  key={semana.week_id}
-                  className="contenedor-semana"
-                >
+            const mostrarAviso =
+              semanaTerminada &&
+              !isCompletado &&
+              !isAnulada &&
+              !avisosCerrados.includes(semana.week_id);
+
+            return (
+              <div
+                key={semana.week_id}
+                className="contenedor-semana"
+              >
+
+                {/* ============================= */}
+                {/* AVISO DE SEMANA */}
+                {/* ============================= */}
+
+                {mostrarAviso && (
+                  <div className="aviso-semana">
+                    <span>
+                      No olvides completar la semana
+                    </span>
+
+                    <button
+                      className="cerrar-aviso"
+                      type="button"
+                      onClick={() =>
+                        cerrarAviso(semana.week_id)
+                      }
+                    >
+                      ×
+                    </button>
+                  </div>
+                )}
+
+                {/* ============================= */}
+                {/* TARJETA DE LA SEMANA */}
+                {/* ============================= */}
+
+                <div className="semana-tarjeta">
 
                   {/* ============================= */}
-                  {/* AVISO DE SEMANA */}
+                  {/* INFORMACIÓN */}
                   {/* ============================= */}
 
-                  {mostrarAviso && (
-                    <div className="aviso-semana">
-                      <span>
-                        No olvides completar la semana
-                      </span>
+                  <div className="semana-info">
+                    <h3 className="semana-titulo">
+                      Semana {semana.week_number}
+                    </h3>
 
-                      <button
-                        className="cerrar-aviso"
-                        type="button"
-                        onClick={() =>
-                          cerrarAviso(semana.week_id)
-                        }
-                      >
-                        ×
-                      </button>
-                    </div>
-                  )}
+                    <p className="semana-fechas">
+                      Desde{" "}
+                      {formatearFecha(
+                        semana.start_date
+                      )}
+                      {" "}
+                      hasta{" "}
+                      {formatearFecha(
+                        semana.end_date
+                      )}
+                    </p>
+                  </div>
 
                   {/* ============================= */}
-                  {/* TARJETA DE LA SEMANA */}
+                  {/* ACCIONES */}
                   {/* ============================= */}
 
-                  <div className="semana-tarjeta">
+                  <div className="semana-acciones">
 
                     {/* ============================= */}
-                    {/* INFORMACIÓN */}
+                    {/* ESTADO */}
                     {/* ============================= */}
 
-                    <div className="semana-info">
-                      <h3 className="semana-titulo">
-                        Semana {semana.week_number}
-                      </h3>
-
-                      <p className="semana-fechas">
-                        Desde{" "}
-                        {formatearFecha(
-                          semana.start_date
-                        )}
-                        {" "}
-                        hasta{" "}
-                        {formatearFecha(
-                          semana.end_date
-                        )}
-                      </p>
-                    </div>
-
-                    {/* ============================= */}
-                    {/* ACCIONES */}
-                    {/* ============================= */}
-
-                    <div className="semana-acciones">
-
-                      {/* ============================= */}
-                      {/* ESTADO */}
-                      {/* ============================= */}
-
-                      <span
-                        className={`estado-badge ${isCompletado
+                    <span
+                      className={`estado-badge ${isCompletado
                           ? "badge-completado"
-                          : isAnulada
-                            ? "badge-anulada"
-                            : isEnCurso
-                              ? "badge-en-curso"
+                          : isEnCurso
+                            ? "badge-en-curso"
+                            : isFutura
+                              ? "badge-pendiente-rojo"
                               : "badge-pendiente"
-                          }`}
-                      >
-                        {estado}
-                      </span>
+                        }`}
+                    >
+                      {estado}
+                    </span>
 
-                      {/* ============================= */}
-                      {/* BOTÓN EDITAR */}
-                      {/* ============================= */}
+                    {/* ============================= */}
+                    {/* BOTÓN EDITAR */}
+                    {/* ============================= */}
 
-                      <button
-                        className="btn-accion"
-                        onClick={() =>
-                          editarSemana(semana)
-                        }
-                        disabled={!puedeEditar(semana)}
-                      >
-                        Editar
-                      </button>
+                    <button
+                      className="btn-accion"
+                      onClick={() =>
+                        editarSemana(semana)
+                      }
+                      disabled={!puedeEditar(semana)}
+                    >
+                      Editar
+                    </button>
 
-                      {/* ============================= */}
-                      {/* BOTÓN DESCARGAR WORD */}
-                      {/* ============================= */}
+                    {/* ============================= */}
+                    {/* BOTÓN DESCARGAR WORD */}
+                    {/* ============================= */}
 
-                      <button
-                        className="btn-accion"
-                        disabled={!isCompletado}
-                        onClick={() =>
-                          descargarWord(semana.week_id)
-                        }
-                      >
-                        Descargar
-                      </button>
+                    <button
+                      className="btn-accion"
+                      disabled={!isCompletado}
+                      onClick={() =>
+                        descargarWord(semana.week_id)
+                      }
+                    >
+                      Descargar
+                    </button>
 
-                    </div>
                   </div>
                 </div>
-              );
+              </div>
+            );
           })}
         </div>
 
