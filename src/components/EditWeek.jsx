@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaGithub, FaLinkedin, FaEnvelope, FaWhatsapp, FaDiscord } from "react-icons/fa";
 import { SiGmail } from "react-icons/si";
 import axios from "axios";
@@ -7,39 +7,14 @@ import axios from "axios";
 function EditWeek() {
     const navigate = useNavigate();
     const { numero, weekId } = useParams();
-
-    // =================================================
-    // Obtener fechas de la semana
-    function obtenerFechasSemana(numeroSemana) {
-        const fechaInicioPracticas =
-            new Date("2026-08-03T00:00:00");
-
-        const inicio = new Date(fechaInicioPracticas);
-
-        // Cada semana suma 7 días
-        inicio.setDate(
-            inicio.getDate() + (Number(numeroSemana) - 1) * 7
-        );
-
-        const fechas = [];
-
-        // De lunes a viernes
-        for (let i = 0; i < 5; i++) {
-            const fecha = new Date(inicio);
-
-            fecha.setDate(
-                inicio.getDate() + i
-            );
-
-            fechas.push(fecha);
-        }
-
-        return fechas;
-    }
+    const [fechasSemana, setFechasSemana] = useState([]);
 
     // =================================================
     // Mostrar fecha correctamente
     function formatearFecha(fecha) {
+
+        if (!fecha) return "";
+
         return fecha.toLocaleDateString("es-ES", {
             day: "2-digit",
             month: "2-digit",
@@ -47,69 +22,73 @@ function EditWeek() {
         });
     }
 
-    const fechasSemana =
-        obtenerFechasSemana(numero);
-
     // =================================================
     // Datos del alumno
     const alumno =
         JSON.parse(localStorage.getItem("usuario"));
 
     // =================================================
-    // Dias y tareas
-    const [dias, setDias] = useState([
-        {
-            nombre: "Lunes",
-            tareas: [
-                {
-                    texto: "Generar Documento para POST",
-                    textoOriginal: "Preparar documentacion",
-                    editando: false
-                }
-            ]
-        },
-        {
-            nombre: "Martes",
-            tareas: [
-                {
-                    texto: "Generar Documento para POST",
-                    textoOriginal: "Preparar documentacion",
-                    editando: false
-                }
-            ]
-        },
-        {
-            nombre: "Miercoles",
-            tareas: [
-                {
-                    texto: "Generar Documento para POST",
-                    textoOriginal: "Preparar documentacion",
-                    editando: false
-                }
-            ]
-        },
-        {
-            nombre: "Jueves",
-            tareas: [
-                {
-                    texto: "Generar Documento para POST",
-                    textoOriginal: "Preparar documentacion",
-                    editando: false
-                }
-            ]
-        },
-        {
-            nombre: "Viernes",
-            tareas: [
-                {
-                    texto: "Generar Documento para POST",
-                    textoOriginal: "Preparar documentacion",
-                    editando: false
-                }
-            ]
-        }
-    ]);
 
+    // =================================================
+    // Dias y tareas
+    const [dias, setDias] = useState([]);
+
+    useEffect(() => {
+        async function cargarSemana() {
+            try {
+                const token = localStorage.getItem("token");
+
+                const respuesta = await axios.get(
+                    `http://localhost:3000/weekly-logs/${weekId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+
+                const datos = respuesta.data.weekTasks;
+
+                // Fechas reales de la semana
+                const fechas = datos.daily_log.map(
+                    (dia) => new Date(dia.date)
+                );
+
+                setFechasSemana(fechas);
+
+                // Convertir los datos del backend
+                // al formato que utiliza nuestro componente
+                const diasBackend = datos.daily_log.map(
+                    (dia, indice) => ({
+                        nombre: [
+                            "Lunes",
+                            "Martes",
+                            "Miercoles",
+                            "Jueves",
+                            "Viernes"
+                        ][indice],
+                        tareas: dia.tasks.map((tarea) => ({
+                            texto: tarea.description,
+                            textoOriginal: tarea.description,
+                            editando: false
+                        }))
+                    })
+                );
+
+                setDias(diasBackend);
+
+            } catch (error) {
+                console.error(
+                    "Error recuperando la semana:",
+                    error
+                );
+            }
+        }
+
+        if (weekId) {
+            cargarSemana();
+        }
+    }, [weekId]);
     // =================================================
     // Estados de los modales
     const [mostrarModal, setMostrarModal] =
@@ -130,28 +109,36 @@ function EditWeek() {
     // =================================================
     // Cerrar sesión
     function cerrarSesion() {
+
         localStorage.removeItem("usuario");
+        localStorage.removeItem("token");
+
         navigate("/");
+
     }
 
     // =================================================
     // Obtener iniciales
     function obtenerIniciales(nombre) {
+
         if (!nombre) return "";
 
         const partes =
             nombre.trim().split(" ");
 
         if (partes.length === 1) {
+
             return partes[0]
                 .substring(0, 2)
                 .toUpperCase();
+
         }
 
         return (
             partes[0].charAt(0) +
             partes[partes.length - 1].charAt(0)
         ).toUpperCase();
+
     }
 
     // =================================================
@@ -193,62 +180,140 @@ function EditWeek() {
     function cerrarModalFinalizar() {
         setMostrarModalFinalizar(false);
     }
+    function prepararDatosParaBackend() {
+
+        return {
+
+            daily_logs: dias.map(
+                (dia, indiceDia) => ({
+
+                    // Fecha real de cada día
+                    date:
+                        fechasSemana[indiceDia],
+
+                    tasks:
+                        dia.tareas.map(
+                            (tarea, indiceTarea) => ({
+
+                                description:
+                                    tarea.texto,
+
+                                order:
+                                    indiceTarea + 1
+
+                            })
+                        ),
+
+                    absence: null
+
+                })
+            )
+
+        };
+
+    }
 
     async function confirmarFinalizar() {
+
+        // =================================================
         // Comprobar tareas vacías
-        const tareasVacias = dias.some((dia) =>
-            dia.tareas.some(
-                (tarea) => tarea.texto.trim() === ""
-            )
-        );
+        // =================================================
+
+        const tareasVacias =
+            dias.some(
+                (dia) =>
+                    dia.tareas.some(
+                        (tarea) =>
+                            tarea.texto.trim() === ""
+                    )
+            );
 
         if (tareasVacias) {
+
             alert(
                 "Completa todas las tareas antes de finalizar la semana"
             );
+
             return;
         }
 
         try {
-            const token = localStorage.getItem("token");
 
-            // Guardar tareas
-            const respuestaTareas = await axios.put(
-                `http://localhost:3000/weekly-logs/${weekId}`,
-                dias,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
+            const token =
+                localStorage.getItem("token");
+
+            const datosBackend =
+                prepararDatosParaBackend();
+
+            const respuestaTareas =
+                await axios.put(
+
+                    `http://localhost:3000/weekly-logs/${weekId}`,
+
+                    datosBackend,
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`
+                        }
                     }
-                }
+
+                );
+
+            console.log(
+                "TAREAS GUARDADAS:",
+                respuestaTareas.data
             );
 
+            // =================================================
             // Cambiar estado a completada
-            const respuestaCompletada = await axios.put(
-                `http://localhost:3000/weekly-logs/${weekId}/completed`,
-                {},
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
+            // =================================================
+
+            const respuestaCompletada =
+                await axios.put(
+
+                    `http://localhost:3000/weekly-logs/${weekId}/completed`,
+
+                    datosBackend,
+                    {
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`
+                        }
                     }
-                }
-            );
+
+                );
 
             console.log(
                 "SEMANA COMPLETADA EN BACKEND:",
-                respuestaCompletada.data?.completedWeek?.status
+                respuestaCompletada
+                    .data
+                    ?.completedWeek
+                    ?.status
             );
 
             setMostrarModalFinalizar(false);
-
             navigate("/weeks");
 
         } catch (error) {
+
             console.error(
                 "Error finalizando semana:",
                 error
             );
+
+
+            if (error.response) {
+
+                console.error(
+                    "Respuesta del BACKEND:",
+                    error.response.data
+                );
+
+            }
+
         }
+
     }
 
     // =================================================
