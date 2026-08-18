@@ -16,6 +16,7 @@ function Weeks() {
   // Datos de alumnos
   const [alumno, setAlumno] = useState({
     nombre: "",
+    apellidos: "",
     fechaInicio: "",
     fechaFin: ""
   });
@@ -41,6 +42,7 @@ function Weeks() {
 
         setAlumno({
           nombre: usuarioGuardado?.nombre || "",
+          apellidos: usuarioGuardado?.apellidos || "",
           fechaInicio: datos.start_date,
           fechaFin: datos.end_date
         });
@@ -56,18 +58,20 @@ function Weeks() {
 
   // ======================================================
   // Funcion para obtener iniciales del nombre del alumno
-  function obtenerIniciales(nombre) {
-    if (!nombre) return "";
+  function obtenerIniciales(nombreCompleto) {
+    if (typeof nombreCompleto !== "string" || !nombreCompleto.trim()) {
+      return "";
+    }
 
-    const palabras = nombre.trim().split(" ");
+    const palabras = nombreCompleto.trim().split(/\s+/);
 
     if (palabras.length === 1) {
-      return palabras[0].substring(0, 2).toUpperCase();
+      return palabras[0]?.charAt(0).toUpperCase() || "";
     }
 
     return (
-      palabras[0][0] +
-      palabras[palabras.length - 1][0]
+      (palabras[0]?.charAt(0) || "") +
+      (palabras[1]?.charAt(0) || "")
     ).toUpperCase();
   }
 
@@ -112,26 +116,60 @@ function Weeks() {
 
   // ======================================================
   // Funcion para calcular la semana
-  function calcularSemanaActual(fechaInicio) {
-    const inicio = new Date(
-      fechaInicio.substring(0, 10) + "T00:00:00"
-    );
-
-    const hoy = new Date();
-
-    const diferencia = hoy - inicio;
-
-    const diasTranscurridos = Math.floor(
-      diferencia / (1000 * 60 * 60 * 24)
-    );
-
-    if (diasTranscurridos < 0) {
+  function calcularSemanaActual(semanas) {
+    if (!semanas || semanas.length === 0) {
       return 0;
     }
 
-    return Math.floor(diasTranscurridos / 7) + 1;
-  }
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
 
+    // Buscar la semana en la que estamos actualmente
+    const semanaActualEncontrada = semanas.find((semana) => {
+      const inicio = new Date(
+        semana.start_date.substring(0, 10) + "T00:00:00"
+      );
+
+      const fin = new Date(
+        semana.end_date.substring(0, 10) + "T00:00:00"
+      );
+
+      return hoy >= inicio && hoy <= fin;
+    });
+
+    if (semanaActualEncontrada) {
+      return semanaActualEncontrada.week_number;
+    }
+
+    // Si todavía no han empezado las prácticas
+    const primeraSemana = semanas[0];
+
+    const inicioPrimeraSemana = new Date(
+      primeraSemana.start_date.substring(0, 10) + "T00:00:00"
+    );
+
+    if (hoy < inicioPrimeraSemana) {
+      return 0;
+    }
+
+    // Si estamos entre semanas o después de la última,
+    // devolver la última semana que ya ha comenzado
+    const semanasComenzadas = semanas.filter((semana) => {
+      const inicio = new Date(
+        semana.start_date.substring(0, 10) + "T00:00:00"
+      );
+
+      return hoy >= inicio;
+    });
+
+    if (semanasComenzadas.length > 0) {
+      return semanasComenzadas[
+        semanasComenzadas.length - 1
+      ].week_number;
+    }
+
+    return 0;
+  }
   // ======================================================
   // Calcular datos de progreso
   const progreso = calcularProgreso(
@@ -139,9 +177,13 @@ function Weeks() {
     alumno.fechaFin
   );
 
-  const semanaActual = calcularSemanaActual(
-    alumno.fechaInicio
+  const semanaCalculada = calcularSemanaActual(
+    semanas
   );
+  const semanaActual =
+    semanas.length > 0
+      ? Math.min(semanaCalculada, semanas.length)
+      : 0;
 
   const semanasCompletas = semanas.filter(
     (semana) =>
@@ -346,7 +388,7 @@ function Weeks() {
 
           <div className="iniciales-container">
             <span className="avatar-circulo">
-              {obtenerIniciales(alumno.nombre)}
+              {obtenerIniciales(`${alumno.nombre} ${alumno.apellidos}`)}
             </span>
 
             <button
@@ -371,7 +413,7 @@ function Weeks() {
 
         <div className="progreso-practicas">
           <h2 className="titulo-progreso">
-            Progreso de prácticas
+            Tiempo de prácticas transcurrido
           </h2>
 
           <div className="fechas-progreso">
@@ -467,7 +509,6 @@ function Weeks() {
             const mostrarAviso =
               semanaTerminada &&
               !isCompletado &&
-              !isAnulada &&
               !avisosCerrados.includes(semana.week_id);
 
             return (
@@ -538,12 +579,12 @@ function Weeks() {
 
                     <span
                       className={`estado-badge ${isCompletado
-                          ? "badge-completado"
-                          : isEnCurso
-                            ? "badge-en-curso"
-                            : isFutura
-                              ? "badge-pendiente-rojo"
-                              : "badge-pendiente"
+                        ? "badge-completado"
+                        : isEnCurso
+                          ? "badge-en-curso"
+                          : isFutura
+                            ? "badge-pendiente-rojo"
+                            : "badge-pendiente"
                         }`}
                     >
                       {estado}
