@@ -91,20 +91,50 @@ function EditWeek() {
     }, [weekId]);
     // =================================================
     // Estados de los modales
-    const [mostrarModal, setMostrarModal] =
-        useState(false);
+    const [modalConfig, setModalConfig] = useState({
+        open: false,
+        action: null,
+        message: "",
+        acceptText: "Aceptar",
+        cancelText: "Cancelar",
+        data: null
+    });
+    function cerrarModal() {
+        setModalConfig({
+            open: false,
+            action: null,
+            message: "",
+            acceptText: "Aceptar",
+            cancelText: "Cancelar",
+            data: null
+        });
+    }
+    function handleModalAccept() {
 
-    const [tareaABorrar, setTareaABorrar] =
-        useState(null);
+        switch (modalConfig.action) {
 
-    const [mostrarModalCancelar, setMostrarModalCancelar] =
-        useState(false);
+            case "cancel":
+                navigate("/weeks");
+                break;
 
-    const [mostrarModalGuardar, setMostrarModalGuardar] =
-        useState(false);
+            case "save":
+                navigate("/weeks");
+                break;
 
-    const [mostrarModalFinalizar, setMostrarModalFinalizar] =
-        useState(false);
+            case "finish":
+                confirmarFinalizar();
+                return;
+
+            case "deleteTask":
+                borrarTarea();
+                return;
+
+            default:
+                break;
+        }
+
+        cerrarModal();
+    }
 
     // =================================================
     // Cerrar sesión
@@ -144,42 +174,44 @@ function EditWeek() {
     // =================================================
     // Cancelar edición de semana
     function cancelar() {
-        setMostrarModalCancelar(true);
-    }
-
-    function confirmarCancelar() {
-        setMostrarModalCancelar(false);
-        navigate("/weeks");
-    }
-
-    function cerrarModalCancelar() {
-        setMostrarModalCancelar(false);
+        setModalConfig({
+            open: true,
+            action: "cancel",
+            message:
+                "¿Estás seguro de que quieres cancelar? Se perderán los datos introducidos.",
+            acceptText: "Aceptar",
+            cancelText: "Cancelar",
+            data: null
+        });
     }
 
     // =================================================
     // Guardar semana
     function guardar() {
-        setMostrarModalGuardar(true);
-    }
-
-    function confirmarGuardar() {
-        setMostrarModalGuardar(false);
-        navigate("/weeks");
-    }
-
-    function cerrarModalGuardar() {
-        setMostrarModalGuardar(false);
+        setModalConfig({
+            open: true,
+            action: "save",
+            message: "¿Estás seguro de que quieres guardar la semana?",
+            acceptText: "Aceptar",
+            cancelText: "Cancelar",
+            data: null
+        });
     }
 
     // =================================================
     // Finalizar semana
     function finalizar() {
-        setMostrarModalFinalizar(true);
+        setModalConfig({
+            open: true,
+            action: "finish",
+            message:
+                "¿Estás seguro de que quieres finalizar la semana? Una vez finalizada no podrás modificar las tareas.",
+            acceptText: "Aceptar",
+            cancelText: "Cancelar",
+            data: null
+        });
     }
 
-    function cerrarModalFinalizar() {
-        setMostrarModalFinalizar(false);
-    }
     function prepararDatosParaBackend() {
 
         return {
@@ -292,7 +324,7 @@ function EditWeek() {
                     ?.status
             );
 
-            setMostrarModalFinalizar(false);
+            cerrarModal();
             navigate("/weeks");
 
         } catch (error) {
@@ -420,36 +452,44 @@ function EditWeek() {
         indiceDia,
         indiceTarea
     ) {
-        setTareaABorrar({
-            indiceDia,
-            indiceTarea
-        });
 
-        setMostrarModal(true);
+        const textoTarea =
+            dias[indiceDia]
+                .tareas[indiceTarea]
+                .texto;
+
+        setModalConfig({
+            open: true,
+            action: "deleteTask",
+            message:
+                `¿Quieres borrar la tarea "${textoTarea.substring(0, 100)}"?`,
+            acceptText: "Aceptar",
+            cancelText: "Cancelar",
+            data: {
+                indiceDia,
+                indiceTarea
+            }
+        });
     }
 
     // =================================================
-    // Cancelar borrado
-    function cancelarBorrado() {
-        setMostrarModal(false);
-        setTareaABorrar(null);
-    }
 
     // =================================================
     // Borrar tarea
     function borrarTarea() {
+
+        const { indiceDia, indiceTarea } =
+            modalConfig.data;
+
         const nuevosDias = [...dias];
 
-        nuevosDias[
-            tareaABorrar.indiceDia
-        ].tareas.splice(
-            tareaABorrar.indiceTarea,
-            1
-        );
+        nuevosDias[indiceDia]
+            .tareas
+            .splice(indiceTarea, 1);
 
         setDias(nuevosDias);
-        setMostrarModal(false);
-        setTareaABorrar(null);
+
+        cerrarModal();
     }
 
     // =================================================
@@ -693,181 +733,32 @@ function EditWeek() {
                 </div>
 
                 {/* ============================= */}
-                {/* MODAL BORRAR */}
+                {/* MODAL ÚNICO */}
                 {/* ============================= */}
 
-                {mostrarModal && tareaABorrar && (
-                    <div className="modal-overlay">
-
-                        <div className="delete-modal">
-
-                            <h3>
-                                Confirmar borrado
-                            </h3>
-
-                            <p>
-                                ¿Quieres borrar la tarea "
-                                {
-                                    dias[
-                                        tareaABorrar.indiceDia
-                                    ]
-                                        .tareas[
-                                        tareaABorrar.indiceTarea
-                                    ]
-                                        .texto.substring(
-                                            0,
-                                            100
-                                        )
-                                }
-                                "?
-                            </p>
-
-                            <div className="modal-actions">
-
-                                <button
-                                    className="cancel-button"
-                                    onClick={
-                                        cancelarBorrado
-                                    }
-                                >
-                                    Cancelar
-                                </button>
-
-                                <button
-                                    className="delete-button"
-                                    onClick={
-                                        borrarTarea
-                                    }
-                                >
-                                    Aceptar
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-                )}
-
-                {/* ============================= */}
-                {/* MODAL CANCELAR */}
-                {/* ============================= */}
-
-                {mostrarModalCancelar && (
+                {modalConfig.open && (
                     <div className="modal-overlay">
 
                         <div className="delete-modal">
 
                             <p>
-                                ¿Estás seguro de que quieres
-                                cancelar?
-                                Se perderán los datos
-                                introducidos.
+                                {modalConfig.message}
                             </p>
 
                             <div className="modal-actions">
 
                                 <button
                                     className="delete-button"
-                                    onClick={
-                                        confirmarCancelar
-                                    }
+                                    onClick={handleModalAccept}
                                 >
-                                    Aceptar
+                                    {modalConfig.acceptText}
                                 </button>
 
                                 <button
                                     className="cancel-button"
-                                    onClick={
-                                        cerrarModalCancelar
-                                    }
+                                    onClick={cerrarModal}
                                 >
-                                    Cancelar
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-                )}
-
-                {/* ============================= */}
-                {/* MODAL GUARDAR */}
-                {/* ============================= */}
-
-                {mostrarModalGuardar && (
-                    <div className="modal-overlay">
-
-                        <div className="delete-modal">
-
-                            <p>
-                                ¿Estás seguro de que quieres
-                                guardar la semana?
-                            </p>
-
-                            <div className="modal-actions">
-
-                                <button
-                                    className="delete-button"
-                                    onClick={
-                                        confirmarGuardar
-                                    }
-                                >
-                                    Aceptar
-                                </button>
-
-                                <button
-                                    className="cancel-button"
-                                    onClick={
-                                        cerrarModalGuardar
-                                    }
-                                >
-                                    Cancelar
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-                )}
-
-                {/* ============================= */}
-                {/* MODAL FINALIZAR */}
-                {/* ============================= */}
-
-                {mostrarModalFinalizar && (
-                    <div className="modal-overlay">
-
-                        <div className="delete-modal">
-
-                            <p>
-                                ¿Estás seguro de que quieres
-                                finalizar la semana?
-                                <br />
-                                Una vez finalizada no podrás
-                                modificar las tareas.
-                            </p>
-
-                            <div className="modal-actions">
-
-                                <button
-                                    className="delete-button"
-                                    onClick={
-                                        confirmarFinalizar
-                                    }
-                                >
-                                    Aceptar
-                                </button>
-
-                                <button
-                                    className="cancel-button"
-                                    onClick={
-                                        cerrarModalFinalizar
-                                    }
-                                >
-                                    Cancelar
+                                    {modalConfig.cancelText}
                                 </button>
 
                             </div>
