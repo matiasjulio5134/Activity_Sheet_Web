@@ -68,6 +68,7 @@ function EditWeek() {
                             "Viernes"
                         ][indice],
                         tareas: dia.tasks.map((tarea) => ({
+                            _id: tarea._id,
                             texto: tarea.description,
                             textoOriginal: tarea.description,
                             editando: false
@@ -227,6 +228,9 @@ function EditWeek() {
                         dia.tareas.map(
                             (tarea, indiceTarea) => ({
 
+                                _id:
+                                    tarea._id,
+
                                 description:
                                     tarea.texto,
 
@@ -292,11 +296,6 @@ function EditWeek() {
 
                 );
 
-            console.log(
-                "TAREAS GUARDADAS:",
-                respuestaTareas.data
-            );
-
             // =================================================
             // Cambiar estado a completada
             // =================================================
@@ -315,14 +314,6 @@ function EditWeek() {
                     }
 
                 );
-
-            console.log(
-                "SEMANA COMPLETADA EN BACKEND:",
-                respuestaCompletada
-                    .data
-                    ?.completedWeek
-                    ?.status
-            );
 
             cerrarModal();
             navigate("/weeks");
