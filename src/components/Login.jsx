@@ -6,6 +6,7 @@ function Login() {
     const [dni, setDni] = useState('');
     const [password, setPassword] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     // Errores de validación
@@ -87,6 +88,10 @@ function Login() {
         };
 
         try {
+            // SPINNER DE CARGA
+            setLoading(true);
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            
             // Llamada al BACKEND
             const resp = await axiosInstance.post("/users/login", userData);
 
@@ -108,6 +113,8 @@ function Login() {
             console.error(
                 error.response?.data || error.message
             );
+        } finally {
+            setLoading(false);
         }
         // =====================================================
 
@@ -164,7 +171,11 @@ function Login() {
                 </div>
                 <button
                     className="login-button"
-                    onClick={iniciarSesion}>Iniciar sesión</button>
+                    onClick={iniciarSesion}
+                    disabled={loading}
+                >
+                    {loading ? <div className="spinner"></div> : "Iniciar sesión"}
+                </button>
                 {errorLogin && (
                     <p className="error login-error">{errorLogin}</p>
                 )}
