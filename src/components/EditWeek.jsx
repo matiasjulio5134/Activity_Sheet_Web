@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { FaGithub, FaLinkedin, FaEnvelope, FaWhatsapp, FaDiscord } from "react-icons/fa";
 import { SiGmail } from "react-icons/si";
-import axios from "axios";
+import { axiosInstance } from "../utils/axios";
 
 function EditWeek() {
     const navigate = useNavigate();
@@ -38,8 +38,8 @@ function EditWeek() {
             try {
                 const token = localStorage.getItem("token");
 
-                const respuesta = await axios.get(
-                    `http://localhost:3000/weekly-logs/${weekId}`,
+                const respuesta = await axiosInstance.get(
+                    `/weekly-logs/${weekId}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`
@@ -282,10 +282,8 @@ function EditWeek() {
                 prepararDatosParaBackend();
 
             const respuestaTareas =
-                await axios.put(
-
-                    `http://localhost:3000/weekly-logs/${weekId}`,
-
+                await axiosInstance.put(
+                    `/weekly-logs/${weekId}`,
                     datosBackend,
                     {
                         headers: {
@@ -301,9 +299,8 @@ function EditWeek() {
             // =================================================
 
             const respuestaCompletada =
-                await axios.put(
-
-                    `http://localhost:3000/weekly-logs/${weekId}/completed`,
+                await axiosInstance.put(
+                    `/weekly-logs/${weekId}/completed`,
 
                     datosBackend,
                     {

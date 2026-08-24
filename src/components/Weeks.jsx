@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaGithub, FaLinkedin, FaEnvelope, FaWhatsapp, FaPhone } from "react-icons/fa";
 import { SiGmail } from "react-icons/si";
-import axios from "axios";
-
+import { axiosInstance } from "../utils/axios";
 function Weeks() {
   const navigate = useNavigate();
   const [avisosCerrados, setAvisosCerrados] = useState([]);
@@ -30,9 +29,7 @@ function Weeks() {
       try {
         const token = localStorage.getItem("token");
 
-        const url = "http://localhost:3000/internships/my-internship";
-
-        const response = await axios.get(url, {
+        const response = await axiosInstance.get("/internships/my-internship", {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -324,16 +321,17 @@ function Weeks() {
   const descargarWord = async (weekId) => {
     const token = localStorage.getItem("token");
 
-    const url =
-      `http://localhost:3000/weekly-logs/${weekId}/download-word`;
-
     try {
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        responseType: "blob",
-      });
+
+      const response = await axiosInstance.get(
+        `/weekly-logs/${weekId}/download-word`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: "blob",
+        }
+      );
 
       const disposition =
         response.headers["content-disposition"];
