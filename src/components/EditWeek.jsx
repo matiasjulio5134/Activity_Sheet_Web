@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useLayoutEffect } from "react";
 import {
   FaGithub,
   FaLinkedin,
@@ -14,6 +14,7 @@ function EditWeek() {
   const navigate = useNavigate();
   const { numero, weekId } = useParams();
   const [fechasSemana, setFechasSemana] = useState([]);
+  const inputRef = useRef(null);
 
   // =================================================
   // Mostrar fecha correctamente
@@ -37,6 +38,9 @@ function EditWeek() {
   // Dias y tareas
   const [dias, setDias] = useState([]);
 
+  // Estado para controlar la tarea que se está editando.
+  const [editingTaskKey, setEditingTaskKey] = useState(null);
+
   useEffect(() => {
     async function cargarSemana() {
       try {
@@ -49,8 +53,6 @@ function EditWeek() {
         });
 
         const datos = respuesta.data.weekTasks;
-
-        console.log("fechas ", datos.daily_log);
 
         // Fechas reales de la semana
         const fechas = datos.daily_log.map((dia) => new Date(dia.date));
@@ -79,6 +81,15 @@ function EditWeek() {
       cargarSemana();
     }
   }, [weekId]);
+
+  useLayoutEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+      const longitud = inputRef.current.value.length;
+      inputRef.current.setSelectionRange(longitud, longitud);
+    }
+  }, [editingTaskKey]);
+
   // =================================================
   // Estados de los modales
   const [modalConfig, setModalConfig] = useState({
@@ -267,16 +278,23 @@ function EditWeek() {
 
   // =================================================
   // Agregar tarea
+  // Se crea un indice temporal solo para usar en front.
+  // El de bbdd o se informa.
   function agregarTarea(indiceDia) {
     const nuevosDias = [...dias];
+    const frontendId = crypto.randomUUID();
 
     nuevosDias[indiceDia].tareas.push({
+      _id: null,
+      frontendId,
       texto: "",
       textoOriginal: "",
       editando: true,
     });
 
     setDias(nuevosDias);
+
+    setEditingTaskKey(frontendId);
   }
 
   // =================================================
@@ -312,10 +330,18 @@ function EditWeek() {
   // Editar tarea
   function editarTarea(indiceDia, indiceTarea) {
     const nuevosDias = [...dias];
-
+    const tarea = nuevosDias[indiceDia].tareas[indiceTarea];
     nuevosDias[indiceDia].tareas[indiceTarea].editando = true;
 
+    console.log(
+      "nuevosDias[indiceDia].tareas[indiceTarea] ",
+      nuevosDias[indiceDia].tareas[indiceTarea]._id,
+    );
+
     setDias(nuevosDias);
+
+    // Si la tarea ya existe mantengo el id, si no cojo el nuevo generado (nueva tarea).
+    setEditingTaskKey(tarea._id ?? tarea.frontendId);
   }
 
   // =================================================
@@ -446,6 +472,13 @@ function EditWeek() {
                     <div className="task-row" key={index}>
                       {tarea.editando ? (
                         <input
+                          ref={(el) => {
+                            // Asigno como referencia el mismo elemento que estoy editando.
+                            const taskKey = tarea._id ?? tarea.frontendId;
+                            if (editingTaskKey === taskKey) {
+                              inputRef.current = el;
+                            }
+                          }}
                           className="task-input"
                           type="text"
                           value={tarea.texto}
