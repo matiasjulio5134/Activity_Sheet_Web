@@ -177,7 +177,7 @@ function Weeks() {
 
   // ======================================================
   // Funcion puedeEditar
-  function puedeEditar(semana) {
+  /*function puedeEditar(semana) {
     const estado = obtenerEstadoSemana(semana);
 
     const fechaSeleccionada = new Date();
@@ -200,8 +200,10 @@ function Weeks() {
     }
 
     return false;
-  }
-
+  }*/
+function puedeEditar(semana) {
+  return true;
+}
   // ======================================================
 
   // ======================================================

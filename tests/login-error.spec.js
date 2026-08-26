@@ -41,3 +41,17 @@ test("contraseña obligatoria", async ({ page }) => {
   await expect(errorMessage).toHaveText("La contraseña es obligatoria");
   await expect(errorMessage).toBeVisible();
 });
+test('contraseña no valida', async ({ page }) => {
+  await page.goto('http://localhost:5173/');
+  await page.getByRole('textbox', { name: '12345678A' }).click();
+  await page.getByRole('textbox', { name: '12345678A' }).click();
+  await page.getByRole('textbox', { name: '12345678A' }).fill('74839201F');
+  await page.getByRole('textbox', { name: '************' }).click();
+  await page.getByRole('textbox', { name: '************' }).fill('123Abc99%');
+  await page.getByRole('button', { name: 'Iniciar sesión' }).click();
+  await page.locator('body').press('ControlOrMeta+CapsLock');
+
+  const errorMessage = page.locator("p.login-error");
+  await expect(errorMessage).toHaveText("DNI o contraseña incorrectos");
+  await expect(errorMessage).toBeVisible();
+});
