@@ -519,7 +519,7 @@ function puedeEditar(semana) {
                     <button
                       className="btn-accion"
                       onClick={() => editarSemana(semana)}
-                      disabled={false}
+                      disabled={!puedeEditar(semana)}
                     >
                       Editar
                     </button>
