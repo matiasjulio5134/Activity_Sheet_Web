@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState, useRef, useLayoutEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   FaGithub,
   FaLinkedin,
@@ -14,8 +14,7 @@ function EditWeek() {
   const navigate = useNavigate();
   const { numero, weekId } = useParams();
   const [fechasSemana, setFechasSemana] = useState([]);
-  const inputRef = useRef(null);
-
+  const inputRefs = useRef({});
   // =================================================
   // Mostrar fecha correctamente
   function formatearFecha(fecha) {
@@ -81,14 +80,6 @@ function EditWeek() {
       cargarSemana();
     }
   }, [weekId]);
-
-  useLayoutEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-      const longitud = inputRef.current.value.length;
-      inputRef.current.setSelectionRange(longitud, longitud);
-    }
-  }, [editingTaskKey]);
 
   // =================================================
   // Estados de los modales
@@ -302,7 +293,7 @@ function EditWeek() {
   function cambiarTexto(indiceDia, indiceTarea, texto) {
     const nuevosDias = [...dias];
 
-    nuevosDias[indiceDia].tareas[indiceTarea].texto = texto;
+    nuevosDias[indiceDia].tareas[indiceTarea].texto = texto.substring(0, 200);
 
     setDias(nuevosDias);
   }
@@ -319,8 +310,12 @@ function EditWeek() {
       nuevosDias[indiceDia].tareas.splice(indiceTarea, 1);
     } else {
       nuevosDias[indiceDia].tareas[indiceTarea].textoOriginal = texto;
-
       nuevosDias[indiceDia].tareas[indiceTarea].editando = false;
+    }
+    const input = inputRefs.current[`${indiceDia}-${indiceTarea}`];
+
+    if (input) {
+      input.blur();
     }
 
     setDias(nuevosDias);
@@ -330,18 +325,22 @@ function EditWeek() {
   // Editar tarea
   function editarTarea(indiceDia, indiceTarea) {
     const nuevosDias = [...dias];
-    const tarea = nuevosDias[indiceDia].tareas[indiceTarea];
-    nuevosDias[indiceDia].tareas[indiceTarea].editando = true;
 
-    console.log(
-      "nuevosDias[indiceDia].tareas[indiceTarea] ",
-      nuevosDias[indiceDia].tareas[indiceTarea]._id,
-    );
+    nuevosDias[indiceDia].tareas[indiceTarea].editando = true;
 
     setDias(nuevosDias);
 
-    // Si la tarea ya existe mantengo el id, si no cojo el nuevo generado (nueva tarea).
-    setEditingTaskKey(tarea._id ?? tarea.frontendId);
+    setTimeout(() => {
+      const input = inputRefs.current[`${indiceDia}-${indiceTarea}`];
+      /*// Si la tarea ya existe mantengo el id, si no cojo el nuevo generado (nueva tarea).
+         setEditingTaskKey(tarea._id ?? tarea.frontendId);*/
+      if (input) {
+        input.focus();
+
+        // Cursor al final del texto
+        input.setSelectionRange(input.value.length, input.value.length);
+      }
+    }, 0);
   }
 
   // =================================================
@@ -473,11 +472,7 @@ function EditWeek() {
                       {tarea.editando ? (
                         <input
                           ref={(el) => {
-                            // Asigno como referencia el mismo elemento que estoy editando.
-                            const taskKey = tarea._id ?? tarea.frontendId;
-                            if (editingTaskKey === taskKey) {
-                              inputRef.current = el;
-                            }
+                            inputRefs.current[`${indiceDia}-${index}`] = el;
                           }}
                           className="task-input"
                           type="text"
@@ -498,6 +493,9 @@ function EditWeek() {
                         />
                       ) : (
                         <input
+                          ref={(elemento) => {
+                            inputRefs.current[`${indiceDia}-${index}`] = elemento;
+                          }}
                           className="task-input"
                           type="text"
                           value={tarea.texto}
