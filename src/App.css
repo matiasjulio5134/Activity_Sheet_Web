@@ -623,6 +623,10 @@ BOTONES Y AUSENCIAS
 .add-task-button:hover {
   background: #f3f3f3;
 }
+.add-task-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 .absence-select {
   padding: 6px 12px;

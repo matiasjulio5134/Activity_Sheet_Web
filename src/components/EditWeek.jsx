@@ -62,6 +62,9 @@ function EditWeek() {
         // al formato que utiliza nuestro componente
         const diasBackend = datos.daily_log.map((dia, indice) => ({
           nombre: ["Lunes", "Martes", "Miercoles", "Jueves", "Viernes"][indice],
+
+          ausencia: dia.absence || "",
+
           tareas: dia.tasks.map((tarea) => ({
             _id: tarea._id,
             texto: tarea.description,
@@ -117,6 +120,10 @@ function EditWeek() {
 
       case "deleteTask":
         borrarTarea();
+        return;
+
+      case "absence":
+        confirmarAusencia();
         return;
 
       default:
@@ -397,6 +404,53 @@ function EditWeek() {
 
     cerrarModal();
   }
+  // =================================================
+
+  // =================================================
+  // funcion Confirmar ausencia
+  function confirmarAusencia() {
+    const { indiceDia, ausencia } = modalConfig.data;
+
+    const nuevosDias = structuredClone(dias);
+
+    // Borrar todas las tareas del día
+    nuevosDias[indiceDia].tareas = [];
+
+    // Guardar la ausencia seleccionada
+    nuevosDias[indiceDia].ausencia = ausencia;
+
+    setDias(nuevosDias);
+
+    cerrarModal();
+  }
+  // =================================================
+
+  // =================================================
+  // funcion cambiarAusencia
+  function cambiarAusencia(indiceDia, valor) {
+
+    if (valor !== "" && dias[indiceDia].tareas.length > 0) {
+      setModalConfig({
+        open: true,
+        action: "absence",
+        message:
+          "Este día tiene tareas. Si continúas se borrarán todas las tareas.",
+        acceptText: "Aceptar",
+        cancelText: "Cancelar",
+        data: {
+          indiceDia,
+          ausencia: valor,
+        },
+      });
+
+      return;
+    }
+
+    const nuevosDias = [...dias];
+    nuevosDias[indiceDia].ausencia = valor;
+    setDias(nuevosDias);
+  }
+  // =================================================
 
   // =================================================
   return (
@@ -452,18 +506,22 @@ function EditWeek() {
                 <button
                   className="add-task-button"
                   onClick={() => agregarTarea(indiceDia)}
+                  disabled={!!dia.ausencia}
                 >
                   Agregar tarea
                 </button>
 
-                <select className="absence-select">
-                  <option>-- Indicar Ausencia --</option>
+                <select
+                  className="absence-select"
+                  value={dia.ausencia}
+                  onChange={(e) => cambiarAusencia(indiceDia, e.target.value)}
+                >
+                  <option value="">-- Indicar Ausencia --</option>
+                  <option value="Baja Medica / Enfermedad">Baja Médica / Enfermedad</option>
 
-                  <option>Baja Médica / Enfermedad</option>
+                  <option value="asuntos_propios">Asuntos Propios</option>
 
-                  <option>Asuntos Propios</option>
-
-                  <option>Día Festivo</option>
+                  <option value="dia_festivo">Día Festivo</option>
                 </select>
               </div>
 
