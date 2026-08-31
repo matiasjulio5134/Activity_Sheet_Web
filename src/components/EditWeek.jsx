@@ -12,6 +12,13 @@ import { axiosInstance } from "../utils/axios";
 
 function EditWeek() {
   const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      navigate("/");
+    }
+  }, [navigate]);
   const { numero, weekId } = useParams();
   const [fechasSemana, setFechasSemana] = useState([]);
   const inputRefs = useRef({});
