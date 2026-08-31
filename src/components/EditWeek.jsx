@@ -273,19 +273,27 @@ function EditWeek() {
   // El de bbdd o se informa.
   function agregarTarea(indiceDia) {
     const nuevosDias = [...dias];
-    const frontendId = crypto.randomUUID();
 
     nuevosDias[indiceDia].tareas.push({
       _id: null,
-      frontendId,
+      frontendId: crypto.randomUUID(),
       texto: "",
       textoOriginal: "",
       editando: true,
     });
 
+    const indiceNuevaTarea = nuevosDias[indiceDia].tareas.length - 1;
+
     setDias(nuevosDias);
 
-    setEditingTaskKey(frontendId);
+    setTimeout(() => {
+      const input =
+        inputRefs.current[`${indiceDia}-${indiceNuevaTarea}`];
+
+      if (input) {
+        input.focus();
+      }
+    }, 0);
   }
 
   // =================================================
