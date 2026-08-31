@@ -37,6 +37,9 @@ function EditWeek() {
   // Dias y tareas
   const [dias, setDias] = useState([]);
 
+  // Detectar si el usuario ha modificado algo
+  const [hayCambios, setHayCambios] = useState(false);
+
   // Estado para controlar la tarea que se está editando.
   const [editingTaskKey, setEditingTaskKey] = useState(null);
 
@@ -111,8 +114,8 @@ function EditWeek() {
         break;
 
       case "save":
-        navigate("/weeks");
-        break;
+        confirmarGuardar();
+        return;
 
       case "finish":
         confirmarFinalizar();
@@ -161,6 +164,11 @@ function EditWeek() {
   // =================================================
   // Cancelar edición de semana
   function cancelar() {
+    if (!hayCambios) {
+      navigate("/weeks");
+      return;
+    }
+
     setModalConfig({
       open: true,
       action: "cancel",
@@ -273,7 +281,6 @@ function EditWeek() {
       }
     }
   }
-
   // =================================================
   // Agregar tarea
   // Se crea un indice temporal solo para usar en front.
@@ -292,6 +299,7 @@ function EditWeek() {
     const indiceNuevaTarea = nuevosDias[indiceDia].tareas.length - 1;
 
     setDias(nuevosDias);
+    setHayCambios(true);
 
     setTimeout(() => {
       const input =
@@ -311,6 +319,8 @@ function EditWeek() {
     nuevosDias[indiceDia].tareas[indiceTarea].texto = texto.substring(0, 200);
 
     setDias(nuevosDias);
+
+    setHayCambios(true);
   }
 
   // =================================================
@@ -401,6 +411,7 @@ function EditWeek() {
     nuevosDias[indiceDia].tareas.splice(indiceTarea, 1);
 
     setDias(nuevosDias);
+    setHayCambios(true);
 
     cerrarModal();
   }
@@ -420,8 +431,38 @@ function EditWeek() {
     nuevosDias[indiceDia].ausencia = ausencia;
 
     setDias(nuevosDias);
+    setHayCambios(true);
 
     cerrarModal();
+  }
+  // =================================================
+
+  // =================================================
+  // funcion confirmarGuardar
+  async function confirmarGuardar() {
+    try {
+      const token = localStorage.getItem("token");
+
+      const datosBackend = prepararDatosParaBackend();
+
+      await axiosInstance.put(
+        `/weekly-logs/${weekId}`,
+        datosBackend,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      navigate("/weeks");
+    } catch (error) {
+      console.error("Error guardando semana:", error);
+
+      if (error.response) {
+        console.error(error.response.data);
+      }
+    }
   }
   // =================================================
 
