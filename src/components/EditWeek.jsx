@@ -135,6 +135,12 @@ function EditWeek() {
       case "absence":
         confirmarAusencia();
         return;
+// fix-editWeeks-21
+      case "signOut":
+        localStorage.removeItem("usuario");
+        localStorage.removeItem("token");
+        navigate("/");
+        return;
 
       default:
         break;
@@ -145,11 +151,24 @@ function EditWeek() {
 
   // =================================================
   // Cerrar sesión
+  // fix-editWeeks-21: Si hay cambios pendientes, pedir confirmación
   function cerrarSesion() {
-    localStorage.removeItem("usuario");
-    localStorage.removeItem("token");
+    if (!hayCambios) {
+      localStorage.removeItem("usuario");
+      localStorage.removeItem("token");
 
-    navigate("/");
+      navigate("/");
+    }
+
+    setModalConfig({
+      open: true,
+      action: "signOut",
+      message:
+        "¿Estás seguro de que quieres cerrar sesión? Se perderán los datos introducidos.",
+      acceptText: "Aceptar",
+      cancelText: "Cancelar",
+      data: null,
+    });
   }
 
   // =================================================
@@ -309,8 +328,7 @@ function EditWeek() {
     setHayCambios(true);
 
     setTimeout(() => {
-      const input =
-        inputRefs.current[`${indiceDia}-${indiceNuevaTarea}`];
+      const input = inputRefs.current[`${indiceDia}-${indiceNuevaTarea}`];
 
       if (input) {
         input.focus();
@@ -452,15 +470,11 @@ function EditWeek() {
 
       const datosBackend = prepararDatosParaBackend();
 
-      await axiosInstance.put(
-        `/weekly-logs/${weekId}`,
-        datosBackend,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axiosInstance.put(`/weekly-logs/${weekId}`, datosBackend, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       navigate("/weeks");
     } catch (error) {
@@ -476,7 +490,6 @@ function EditWeek() {
   // =================================================
   // funcion cambiarAusencia
   function cambiarAusencia(indiceDia, valor) {
-
     if (valor !== "" && dias[indiceDia].tareas.length > 0) {
       setModalConfig({
         open: true,
@@ -565,7 +578,9 @@ function EditWeek() {
                   onChange={(e) => cambiarAusencia(indiceDia, e.target.value)}
                 >
                   <option value="">-- Indicar Ausencia --</option>
-                  <option value="Baja Medica / Enfermedad">Baja Médica / Enfermedad</option>
+                  <option value="Baja Medica / Enfermedad">
+                    Baja Médica / Enfermedad
+                  </option>
 
                   <option value="asuntos_propios">Asuntos Propios</option>
 
@@ -608,7 +623,8 @@ function EditWeek() {
                       ) : (
                         <input
                           ref={(elemento) => {
-                            inputRefs.current[`${indiceDia}-${index}`] = elemento;
+                            inputRefs.current[`${indiceDia}-${index}`] =
+                              elemento;
                           }}
                           className="task-input"
                           type="text"
