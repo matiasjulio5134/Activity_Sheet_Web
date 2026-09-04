@@ -9,7 +9,7 @@ import {
 } from "react-icons/fa";
 import { SiGmail } from "react-icons/si";
 import { axiosInstance } from "../utils/axios";
-
+import { showToast } from "../components/Toast";
 function EditWeek() {
   const navigate = useNavigate();
   useEffect(() => {
@@ -120,9 +120,6 @@ function EditWeek() {
         navigate("/weeks");
         break;
 
-      case "save":
-        confirmarGuardar();
-        return;
 
       case "finish":
         confirmarFinalizar();
@@ -135,7 +132,7 @@ function EditWeek() {
       case "absence":
         confirmarAusencia();
         return;
-// fix-editWeeks-21
+      // fix-editWeeks-21
       case "signOut":
         localStorage.removeItem("usuario");
         localStorage.removeItem("token");
@@ -156,8 +153,8 @@ function EditWeek() {
     if (!hayCambios) {
       localStorage.removeItem("usuario");
       localStorage.removeItem("token");
-
       navigate("/");
+      return;
     }
 
     setModalConfig({
@@ -209,14 +206,7 @@ function EditWeek() {
   // =================================================
   // Guardar semana
   function guardar() {
-    setModalConfig({
-      open: true,
-      action: "save",
-      message: "¿Estás seguro de que quieres guardar la semana?",
-      acceptText: "Aceptar",
-      cancelText: "Cancelar",
-      data: null,
-    });
+    confirmarGuardar();
   }
 
   // =================================================
@@ -464,6 +454,7 @@ function EditWeek() {
 
   // =================================================
   // funcion confirmarGuardar
+  // fix-editWeeks-18 No redirige a weeks. Guardado seguro.
   async function confirmarGuardar() {
     try {
       const token = localStorage.getItem("token");
@@ -475,8 +466,8 @@ function EditWeek() {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      navigate("/weeks");
+      setHayCambios(false);
+      showToast("success", "Semana guardada");
     } catch (error) {
       console.error("Error guardando semana:", error);
 
@@ -681,7 +672,11 @@ function EditWeek() {
         {/* ============================= */}
 
         <div className="week-actions">
-          <button className="cancel-button" onClick={cancelar}>
+          <button
+            className="cancel-button"
+            data-testid="btn-cancel"
+            onClick={cancelar}
+          >
             Cancelar
           </button>
 
