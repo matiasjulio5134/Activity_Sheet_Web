@@ -43,6 +43,7 @@ function EditWeek() {
   // =================================================
   // Dias y tareas
   const [dias, setDias] = useState([]);
+  const [puedeFinalizar, setPuedeFinalizar] = useState(false);
 
   // Detectar si el usuario ha modificado algo
   const [hayCambios, setHayCambios] = useState(false);
@@ -62,6 +63,7 @@ function EditWeek() {
         });
 
         const datos = respuesta.data.weekTasks;
+        console.log("RESPUESTA SEMANA:", respuesta.data);
 
         // Fechas reales de la semana
         const fechas = datos.daily_log.map((dia) => new Date(dia.date));
@@ -84,6 +86,13 @@ function EditWeek() {
         }));
 
         setDias(diasBackend);
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+
+        const finSemana = new Date(datos.end_date);
+        finSemana.setHours(0, 0, 0, 0);
+
+        setPuedeFinalizar(hoy >= finSemana);
       } catch (error) {
         console.error("Error recuperando la semana:", error);
       }
@@ -684,7 +693,11 @@ function EditWeek() {
             Guardar
           </button>
 
-          <button className="finish-button" onClick={finalizar}>
+          <button
+            className="finish-button"
+            onClick={finalizar}
+            disabled={!puedeFinalizar}
+          >
             Finalizar Semana
           </button>
         </div>
