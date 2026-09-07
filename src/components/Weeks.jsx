@@ -282,7 +282,7 @@ function Weeks() {
     // SEMANA QUE TERMINÓ PERO NO SE FINALIZÓ
     // ==========================================
     if (fechaSeleccionada > fechaFinSemana) {
-      return "En curso";
+      return "Pendiente";
     }
 
     return "Pendiente";
