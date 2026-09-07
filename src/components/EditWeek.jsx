@@ -35,6 +35,21 @@ function EditWeek() {
   }
 
   // =================================================
+  // Comprobar si la fecha es futura
+  function esFechaFutura(fecha) {
+    if (!fecha) return false;
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const fechaDia = new Date(fecha);
+    fechaDia.setHours(0, 0, 0, 0);
+
+    return fechaDia > hoy;
+  }
+  // =================================================
+
+  // =================================================
   // Datos del alumno
   const alumno = JSON.parse(localStorage.getItem("usuario"));
 
@@ -311,6 +326,11 @@ function EditWeek() {
   // Se crea un indice temporal solo para usar en front.
   // El de bbdd o se informa.
   function agregarTarea(indiceDia) {
+    // No permitir tareas en fechas futuras
+    if (esFechaFutura(fechasSemana[indiceDia])) {
+      return;
+    }
+
     const nuevosDias = [...dias];
 
     nuevosDias[indiceDia].tareas.push({
@@ -567,7 +587,7 @@ function EditWeek() {
                 <button
                   className="add-task-button"
                   onClick={() => agregarTarea(indiceDia)}
-                  disabled={!!dia.ausencia}
+                  disabled={!!dia.ausencia || esFechaFutura(fechasSemana[indiceDia])}
                 >
                   Agregar tarea
                 </button>
@@ -636,10 +656,10 @@ function EditWeek() {
                       <button
                         className="edit-button"
                         onClick={() => editarTarea(indiceDia, index)}
+                        disabled={esFechaFutura(fechasSemana[indiceDia])}
                       >
                         Editar
                       </button>
-
                       <button
                         className="delete-button"
                         onClick={() => abrirModal(indiceDia, index)}
