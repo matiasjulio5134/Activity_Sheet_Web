@@ -467,6 +467,14 @@
 }
 
 /* ================================= */
+/* ESTADO: FALLIDO */
+/* ================================= */
+.badge-fallido {
+  background-color: #d32f2f;
+  color: white;
+}
+
+/* ================================= */
 /* ESTADO: EN CURSO */
 /* ================================= */
 .badge-en-curso {
@@ -486,7 +494,7 @@
 /* ================================= */
 
 .badge-pendiente-rojo {
-  background-color: red;
+  background-color: #ff8c00;
   color: white;
 }
 

@@ -195,7 +195,11 @@ function Weeks() {
       return false;
     }
 
-    if (estado === "Pendiente" || estado === "En curso") {
+    if (
+      estado === "Pendiente" ||
+      estado === "En curso" ||
+      estado === "Fallido"
+    ) {
       return true;
     }
 
@@ -282,7 +286,7 @@ function Weeks() {
     // SEMANA QUE TERMINÓ PERO NO SE FINALIZÓ
     // ==========================================
     if (fechaSeleccionada > fechaFinSemana) {
-      return "Pendiente";
+      return "Fallido";
     }
 
     return "Pendiente";
@@ -427,6 +431,8 @@ function Weeks() {
 
             const isEnCurso = estadoMinusculas === "en curso";
 
+            const isFallido = estadoMinusculas === "fallido";
+
             const fechaHoy = new Date();
             fechaHoy.setHours(0, 0, 0, 0);
 
@@ -457,8 +463,9 @@ function Weeks() {
 
                 {mostrarAviso && (
                   <div className="aviso-semana">
-                    <span>No olvides completar la semana</span>
-
+                    <span>
+                      La semana {semana.week_number} ha finalizado y aún no ha sido completada.
+                    </span>
                     <button
                       className="cerrar-aviso"
                       type="button"
@@ -499,15 +506,16 @@ function Weeks() {
                     {/* ============================= */}
 
                     <span
-                      className={`estado-badge ${
-                        isCompletado
-                          ? "badge-completado"
-                          : isEnCurso
-                            ? "badge-en-curso"
+                      className={`estado-badge ${isCompletado
+                        ? "badge-completado"
+                        : isEnCurso
+                          ? "badge-en-curso"
+                          : isFallido
+                            ? "badge-fallido"
                             : isFutura
                               ? "badge-pendiente-rojo"
                               : "badge-pendiente"
-                      }`}
+                        }`}
                     >
                       {estado}
                     </span>
