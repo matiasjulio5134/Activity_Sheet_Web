@@ -473,6 +473,7 @@
   background-color: blue;
   color: white;
 }
+
 /* ================================= */
 /* ESTADO: COMPLETADO */
 /* ================================= */
@@ -623,6 +624,7 @@ BOTONES Y AUSENCIAS
 .add-task-button:hover {
   background: #f3f3f3;
 }
+
 .add-task-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
@@ -763,7 +765,7 @@ BOTONES FINALES
   background: #18a766;
 }
 
-/* Boton finalizar*/
+/* Botón finalizar */
 .finish-button {
   padding: 10px 18px;
   margin-left: 10px;
@@ -778,6 +780,12 @@ BOTONES FINALES
 
 .finish-button:hover {
   background: #138cbc;
+}
+
+.finish-button:disabled,
+.finish-button:disabled:hover {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* ========================================
