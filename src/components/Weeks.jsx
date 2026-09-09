@@ -197,8 +197,7 @@ function Weeks() {
 
     if (
       estado === "Pendiente" ||
-      estado === "En curso" ||
-      estado === "Fallido"
+      estado === "En curso"
     ) {
       return true;
     }
@@ -286,7 +285,7 @@ function Weeks() {
     // SEMANA QUE TERMINÓ PERO NO SE FINALIZÓ
     // ==========================================
     if (fechaSeleccionada > fechaFinSemana) {
-      return "Fallido";
+      return "Pendiente";
     }
 
     return "Pendiente";
@@ -431,7 +430,7 @@ function Weeks() {
 
             const isEnCurso = estadoMinusculas === "en curso";
 
-            const isFallido = estadoMinusculas === "fallido";
+            const isPendiente = estadoMinusculas === "pendiente";
 
             const fechaHoy = new Date();
             fechaHoy.setHours(0, 0, 0, 0);
@@ -464,7 +463,7 @@ function Weeks() {
                 {mostrarAviso && (
                   <div className="aviso-semana">
                     <span>
-                      La semana {semana.week_number} ha finalizado y aún no ha sido completada.
+                      Semana {semana.week_number} sin completar.
                     </span>
                     <button
                       className="cerrar-aviso"
@@ -510,11 +509,9 @@ function Weeks() {
                         ? "badge-completado"
                         : isEnCurso
                           ? "badge-en-curso"
-                          : isFallido
-                            ? "badge-fallido"
-                            : isFutura
-                              ? "badge-pendiente-rojo"
-                              : "badge-pendiente"
+                          : isFutura
+                            ? "badge-pendiente-rojo"
+                            : "badge-pendiente"
                         }`}
                     >
                       {estado}
@@ -735,7 +732,7 @@ function Weeks() {
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 }
 
