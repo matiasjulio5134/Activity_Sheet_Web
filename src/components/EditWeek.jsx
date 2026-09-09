@@ -630,6 +630,7 @@ function EditWeek() {
                           onChange={(e) =>
                             cambiarTexto(indiceDia, index, e.target.value)
                           }
+                          onBlur={() => guardarTarea(indiceDia, index)}
                           onKeyDown={(e) => {
                             if (e.key === "Enter") {
                               guardarTarea(indiceDia, index);
@@ -652,7 +653,6 @@ function EditWeek() {
                           readOnly
                         />
                       )}
-
                       <button
                         className="edit-button"
                         onClick={() => editarTarea(indiceDia, index)}
