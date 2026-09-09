@@ -780,15 +780,6 @@ function EditWeek() {
               >
                 <FaLinkedin />
               </a>
-
-              <a
-                href="https://discord.gg/TU_INVITACION"
-                target="_blank"
-                rel="noreferrer"
-                title="Discord"
-              >
-                <FaDiscord />
-              </a>
             </div>
           </div>
 
@@ -806,23 +797,12 @@ function EditWeek() {
               >
                 <FaGithub />
               </a>
-
               <a
-                href="https://wa.me/643873510"
+                href="https://www.linkedin.com/in/matias-brice%C3%B1o-837a50300/"
                 target="_blank"
                 rel="noreferrer"
-                title="WhatsApp"
               >
-                <FaWhatsapp />
-              </a>
-
-              <a
-                href="https://mail.google.com/mail/?view=cm&fs=1&to=matiasjulio5134@gmail.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Gmail"
-              >
-                <SiGmail />
+                <FaLinkedin />
               </a>
             </div>
           </div>

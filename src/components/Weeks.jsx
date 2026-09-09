@@ -4,8 +4,7 @@ import {
   FaGithub,
   FaLinkedin,
   FaEnvelope,
-  FaWhatsapp,
-  FaPhone,
+  FaWhatsapp
 } from "react-icons/fa";
 import { SiGmail } from "react-icons/si";
 import { axiosInstance } from "../utils/axios";
@@ -571,14 +570,13 @@ function Weeks() {
             <h3>¿Necesitas ayuda?</h3>
 
             <p>
-              Si encuentras algún error o problema técnico, ponte en contacto
-              con nuestro equipo de soporte.
+              Si tienes alguna duda, ponte en contacto con nosotros.
             </p>
 
             <div className="botones-ayuda">
               <a className="btn-contactar">
                 <FaEnvelope />
-                Contactar soporte
+                Contactar
               </a>
 
               <button
@@ -587,36 +585,6 @@ function Weeks() {
               >
                 ℹ Estados de prácticas
               </button>
-            </div>
-          </div>
-
-          {/* CONTACTO */}
-
-          <div className="footer-col footer-centro">
-            <h3>Contacto</h3>
-
-            <div className="contacto-soporte">
-              <div className="contacto-item">
-                <FaEnvelope className="icono-contacto" />
-
-                <div>
-                  <h4>Email de soporte</h4>
-
-                  <a href="mailto:soporte@anmbsoftware.com">
-                    soporte@anmbsoftware.com
-                  </a>
-                </div>
-              </div>
-
-              <div className="contacto-item">
-                <FaPhone className="icono-contacto" />
-
-                <div>
-                  <h4>Teléfono de contacto</h4>
-
-                  <a href="tel:+34915536162">+34 915 536 162</a>
-                </div>
-              </div>
             </div>
           </div>
 
@@ -643,14 +611,6 @@ function Weeks() {
                 >
                   <FaLinkedin />
                 </a>
-
-                <a
-                  href="https://discord.gg/TU_INVITACION"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <SiGmail />
-                </a>
               </div>
             </div>
 
@@ -668,19 +628,11 @@ function Weeks() {
                 </a>
 
                 <a
-                  href="https://wa.me/643873510"
+                  href="https://www.linkedin.com/in/matias-brice%C3%B1o-837a50300/"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  <FaWhatsapp />
-                </a>
-
-                <a
-                  href="https://mail.google.com/mail/?view=cm&fs=1&to=matiasjulio5134@gmail.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <SiGmail />
+                  <FaLinkedin />
                 </a>
               </div>
             </div>
@@ -706,8 +658,7 @@ function Weeks() {
               <p>Consulta el significado de cada estado de tus semanas.</p>
 
               <div className="estado-modal">
-                <h3>🟡 Pendiente</h3>
-
+                <h3>🟠 Pendiente</h3>
                 <p>La semana todavía no ha comenzado.</p>
               </div>
 

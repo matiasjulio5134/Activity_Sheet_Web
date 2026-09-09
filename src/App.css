@@ -790,47 +790,6 @@ BOTONES FINALES
   cursor: not-allowed;
 }
 
-/* ========================================
-   MODAL
-======================================== */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(0, 0, 0, .5);
-  z-index: 1000;
-}
-
-.delete-modal {
-  width: 400px;
-  padding: 25px;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, .3);
-}
-
-.delete-modal h3 {
-  margin-top: 0;
-  color: #222;
-}
-
-.delete-modal p {
-  color: #555;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-}
-
 /*==================================*/
 /* FOOTER */
 /*==================================*/
@@ -863,40 +822,6 @@ BOTONES FINALES
   align-items: center;
   text-align: center;
   padding: 0 15px;
-}
-
-.contacto-soporte {
-  display: flex;
-  flex-direction: column;
-
-  gap: 25px;
-
-  margin-top: 15px;
-}
-
-.contacto-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.icono-contacto {
-  font-size: 25px;
-  color: #f39c12;
-}
-
-.contacto-item h4 {
-  margin: 0;
-  color: white;
-}
-
-.contacto-item a {
-  color: #d8d8d8;
-  text-decoration: none;
-}
-
-.contacto-item a:hover {
-  color: #f39c12;
 }
 
 /* BOTON CONTACTAR SOPORTE */
@@ -1052,9 +977,7 @@ BOTONES FINALES
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
     text-align: center;
-
     padding: 30px 20px;
     gap: 35px;
   }
@@ -1102,7 +1025,6 @@ BOTONES FINALES
   .redes a {
     font-size: 26px;
   }
-
 }
 
 /* ================================= */
@@ -1147,7 +1069,6 @@ BOTONES FINALES
     border-radius: 12px;
   }
 
-
   /* ==============================
      CABECERA DEL DÍA - RESPONSIVE MOVIL
   ============================== */
@@ -1190,7 +1111,6 @@ BOTONES FINALES
     white-space: nowrap;
   }
 
-
   /* ==============================
      LISTA DE TAREAS - RESPONSIVE MOVIL
   ============================== */
@@ -1201,7 +1121,6 @@ BOTONES FINALES
     overflow-y: visible;
     padding-right: 0;
   }
-
 
   /* ==============================
      CADA TAREA - RESPONSIVE MOVIL
@@ -1215,7 +1134,6 @@ BOTONES FINALES
     margin-top: 12px;
     margin-bottom: 20px;
   }
-
 
   /* ==============================
      INPUT DE TAREA - RESPONSIVE MOVIL
@@ -1232,24 +1150,17 @@ BOTONES FINALES
     line-height: 1.3;
   }
 
-
   /* ==============================
      BOTÓN EDITAR - RESPONSIVE MOVIL
   ============================== */
-
   .edit-button {
     width: 89px;
-
     margin-left: 0;
     margin-bottom: 7px;
-
     padding: 8px 5px;
-
     border-radius: 12px;
-
     font-size: 11px;
   }
-
 
   /* ==============================
      BOTÓN BORRAR - RESPONSIVE MOVIL
@@ -1257,16 +1168,11 @@ BOTONES FINALES
 
   .delete-button {
     width: 89px;
-
     margin-left: 0;
-
     padding: 8px 5px;
-
     border-radius: 12px;
-
     font-size: 11px;
   }
-
 
   /* ==============================
      SIN TAREAS - RESPONSIVE MOVIL
@@ -1284,17 +1190,13 @@ BOTONES FINALES
   .week-actions {
     display: flex;
     flex-direction: column;
-
     width: 100%;
-
     gap: 8px;
-
     margin-top: 25px;
   }
 
   .week-actions button {
     width: 100%;
-
     margin-left: 0;
   }
 
@@ -1305,7 +1207,6 @@ BOTONES FINALES
   .delete-modal {
     width: calc(100% - 30px);
     max-width: 350px;
-
     padding: 22px;
   }
 
@@ -1317,24 +1218,9 @@ BOTONES FINALES
     width: 100px;
   }
 }
-
-/* ================================= */
-/* MODAL DE CONFIRMACIÓN */
-/* ================================= */
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.25);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-
+/* ========================================
+   MODALES
+======================================== */
 .delete-modal {
   width: 350px;
   background-color: #ffffff;
@@ -1342,6 +1228,11 @@ BOTONES FINALES
   padding: 30px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   text-align: center;
+}
+
+.delete-modal h3 {
+  margin-top: 0;
+  color: #222;
 }
 
 .delete-modal p {
