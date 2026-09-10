@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FaGithub,
-  FaLinkedin,
-  FaEnvelope,
-  FaWhatsapp
-} from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaEnvelope, FaWhatsapp } from "react-icons/fa";
 import { SiGmail } from "react-icons/si";
 import { axiosInstance } from "../utils/axios";
 function Weeks() {
@@ -194,10 +189,7 @@ function Weeks() {
       return false;
     }
 
-    if (
-      estado === "Pendiente" ||
-      estado === "En curso"
-    ) {
+    if (estado === "Pendiente" || estado === "En curso") {
       return true;
     }
 
@@ -461,9 +453,7 @@ function Weeks() {
 
                 {mostrarAviso && (
                   <div className="aviso-semana">
-                    <span>
-                      Semana {semana.week_number} sin completar.
-                    </span>
+                    <span>Semana {semana.week_number} sin completar.</span>
                     <button
                       className="cerrar-aviso"
                       type="button"
@@ -504,14 +494,15 @@ function Weeks() {
                     {/* ============================= */}
 
                     <span
-                      className={`estado-badge ${isCompletado
-                        ? "badge-completado"
-                        : isEnCurso
-                          ? "badge-en-curso"
-                          : isFutura
-                            ? "badge-pendiente-rojo"
-                            : "badge-pendiente"
-                        }`}
+                      className={`estado-badge ${
+                        isCompletado
+                          ? "badge-completado"
+                          : isEnCurso
+                            ? "badge-en-curso"
+                            : isFutura
+                              ? "badge-pendiente"
+                              : "badge-anulada" // anulada.
+                      }`}
                     >
                       {estado}
                     </span>
@@ -569,9 +560,7 @@ function Weeks() {
           <div className="footer-col footer-centro">
             <h3>¿Necesitas ayuda?</h3>
 
-            <p>
-              Si tienes alguna duda, ponte en contacto con nosotros.
-            </p>
+            <p>Si tienes alguna duda, ponte en contacto con nosotros.</p>
 
             <div className="botones-ayuda">
               <a className="btn-contactar">
@@ -683,7 +672,7 @@ function Weeks() {
           </div>
         )}
       </div>
-    </div >
+    </div>
   );
 }
 
