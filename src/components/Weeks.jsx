@@ -20,7 +20,6 @@ function Weeks() {
     fechaInicio: "",
     fechaFin: "",
   });
-// prueba rama bienvenida usuario
   // =====================================================
   // Semanas
   const [semanas, setSemanas] = useState([]);
@@ -375,8 +374,13 @@ function Weeks() {
         {/* ============================= */}
 
         <div className="progreso-practicas">
-          <h2 className="titulo-progreso">Tiempo de prácticas transcurrido</h2>
+          <h1 className="mensaje-bienvenida">
+            Bienvenido, {alumno.nombre} {alumno.apellidos}
+          </h1>
 
+          <h2 className="titulo-progreso">
+            Tiempo de prácticas transcurrido
+          </h2>
           <div className="fechas-progreso">
             <p>
               <strong>Fecha inicio:</strong>{" "}

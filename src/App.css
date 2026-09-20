@@ -1397,3 +1397,10 @@ BOTONES FINALES
     transform: rotate(360deg);
   }
 }
+.mensaje-bienvenida {
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 20px;
+  color: #173e52;
+  font-weight: 700;
+}
