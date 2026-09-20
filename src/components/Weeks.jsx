@@ -352,6 +352,10 @@ function Weeks() {
         <div className="encabezado">
           <h2 className="logo">Logo Empresa</h2>
 
+          <h2 className="titulo-cabecera">
+            Mis prácticas
+          </h2>
+
           <div className="iniciales-container">
             <span className="avatar-circulo">
               {obtenerIniciales(`${alumno.nombre} ${alumno.apellidos}`)}
@@ -372,15 +376,15 @@ function Weeks() {
         {/* ============================= */}
         {/* PROGRESO */}
         {/* ============================= */}
+        <h1 className="mensaje-bienvenida">
+          Bienvenido, {alumno.nombre} {alumno.apellidos}
+        </h1>
 
         <div className="progreso-practicas">
-          <h1 className="mensaje-bienvenida">
-            Bienvenido, {alumno.nombre} {alumno.apellidos}
-          </h1>
-
           <h2 className="titulo-progreso">
             Tiempo de prácticas transcurrido
           </h2>
+
           <div className="fechas-progreso">
             <p>
               <strong>Fecha inicio:</strong>{" "}
@@ -388,7 +392,8 @@ function Weeks() {
             </p>
 
             <p>
-              <strong>Fecha fin:</strong> {formatearFecha(alumno.fechaFin)}
+              <strong>Fecha fin:</strong>{" "}
+              {formatearFecha(alumno.fechaFin)}
             </p>
           </div>
 
@@ -402,16 +407,19 @@ function Weeks() {
               ></div>
             </div>
 
-            <span className="progreso-porcentaje">{progreso}%</span>
+            <span className="progreso-porcentaje">
+              {progreso}%
+            </span>
           </div>
 
           <p className="texto-progreso">
             {semanasCompletas} de {semanas.length} semanas completadas
           </p>
 
-          <p className="semana-actual">Semana actual: {semanaActual}</p>
+          <p className="semana-actual">
+            Semana actual: {semanaActual}
+          </p>
         </div>
-
         {/* ============================= */}
         {/* TÍTULO LISTADO */}
         {/* ============================= */}
