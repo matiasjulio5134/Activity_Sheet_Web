@@ -188,7 +188,7 @@ function Login() {
           onClick={iniciarSesion}
           disabled={loading}
         >
-          {loading ? <div className="spinner-login"></div> : "Iniciar sesión"}
+          {loading ? <span className="spinner-login"></span> : "Iniciar sesión"}
         </button>
         {errorLogin && <p className="error login-error">{errorLogin}</p>}
       </div>

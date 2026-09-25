@@ -72,11 +72,16 @@
   background: #f3f4f6;
   outline: none;
   font-size: 15px;
+  color: #222;
 }
 
 .login-input:focus {
   border-color: #19a8d9;
   background: #fff;
+}
+
+.login-input::placeholder {
+  color: #888;
 }
 
 /* Contenedor del input de contraseña */
@@ -175,12 +180,18 @@
 
 .encabezado {
   max-width: 1200px;
-  /* Alínea el contenido con el resto de la página */
   margin: 0 auto;
   padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.titulo-cabecera {
+  font-size: 28px;
+  font-weight: 700;
+  color: #173e52;
+  margin: 0;
 }
 
 .logo {
@@ -277,6 +288,8 @@
 .titulo-progreso {
   margin-bottom: 15px;
   font-size: 22px;
+  color: #173e52;
+  font-weight: 700;
 }
 
 .fechas-progreso p {
@@ -668,6 +681,7 @@ LISTA DE TAREAS
   font-size: 10px;
   outline: none;
   box-sizing: border-box;
+  color: #222;
 }
 
 .task-input:focus {
@@ -1328,6 +1342,7 @@ BOTONES FINALES
 }
 
 /* SPINNER LOGIN */
+
 .spinner-login {
   display: inline-block;
   width: 16px;
@@ -1387,4 +1402,12 @@ BOTONES FINALES
   to {
     transform: rotate(360deg);
   }
+}
+
+.mensaje-bienvenida {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #173e52;
+  margin: 20px 0;
 }
