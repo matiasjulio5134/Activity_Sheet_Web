@@ -1,233 +1,203 @@
-```jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../utils/axios";
-import {
-  FaGithub,
-  FaLinkedin,
-  FaEnvelope,
-  FaWhatsapp,
-  FaPhone,
-  FaLock,
-  FaUser,
-  FaEye,
-  FaEyeSlash,
-} from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 function Login() {
-  const [dni, setDni] = useState("");
-  const [password, setPassword] = useState("");
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
   const navigate = useNavigate();
 
-  // Errores de validación
+  const [dni, setDni] = useState("");
+  const [password, setPassword] = useState("");
+  const [mostrarPassword, setMostrarPassword] = useState(false);
+
   const [errorDni, setErrorDni] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
-  const [errorLogin, setErrorLogin] = useState("");
+  const [errorGeneral, setErrorGeneral] = useState("");
 
-  // =====================================================
-  // Validación del DNI
-  function validarDNI(dni) {
-    const letras = "TRWAGMYFPDXBNJZSQVHLCKE";
+  const [loading, setLoading] = useState(false);
 
-    // Comprobar que tenga 8 números y una letra
-    const formato = /^[0-9]{8}[A-Za-z]$/;
+  // Validación del DNI/NIE español
+  const validarDNI = (valor) => {
+    const dniLimpio = valor.toUpperCase().trim();
 
-    if (!formato.test(dni)) {
+    if (!/^\d{8}[A-Z]$/.test(dniLimpio)) {
       return false;
     }
 
-    const numero = parseInt(dni.substring(0, 8));
-    const letra = dni.substring(8).toUpperCase();
+    const letras = "TRWAGMYFPDXBNJZSQVHLCKE";
+    const numero = parseInt(dniLimpio.substring(0, 8), 10);
+    const letra = dniLimpio.charAt(8);
 
-    const resto = numero % 23;
-
-    return letras[resto] === letra;
-  }
-
-  // ======================================================
-  // Validación de la contraseña
-  function validarPassword(password) {
-    const formato =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#_-]).{6,}$/;
-
-    return formato.test(password);
-  }
-
-  // ======================================================
-  // Función para mostrar/ocultar contraseña
-  const togglePassword = () => {
-    setIsPasswordVisible((prev) => !prev);
+    return letras[numero % 23] === letra;
   };
 
-  // ======================================================
-  // Se ejecuta al pulsar el botón. Función iniciar sesión
-  async function iniciarSesion() {
-    // Limpiar errores anteriores
+  // Validación de contraseña
+  const validarPassword = (valor) => {
+    const tieneNumero = /\d/.test(valor);
+    const tieneMinuscula = /[a-z]/.test(valor);
+    const tieneMayuscula = /[A-Z]/.test(valor);
+    const tieneEspecial = /[^A-Za-z0-9]/.test(valor);
+
+    return (
+      valor.length >= 6 &&
+      tieneNumero &&
+      tieneMinuscula &&
+      tieneMayuscula &&
+      tieneEspecial
+    );
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     setErrorDni("");
     setErrorPassword("");
-    setErrorLogin("");
+    setErrorGeneral("");
 
-    let formularioValido = true;
+    let hayErrores = false;
 
-    // =====================================================
-    // Validar DNI
-    if (dni === "") {
-      setErrorDni("El DNI es obligatorio");
-      formularioValido = false;
+    if (!dni.trim()) {
+      setErrorDni("Introduce tu DNI.");
+      hayErrores = true;
     } else if (!validarDNI(dni)) {
-      setErrorDni("El DNI no es valido");
-      formularioValido = false;
+      setErrorDni("El DNI no es válido.");
+      hayErrores = true;
     }
 
-    // =====================================================
-    // Validar contraseña
-    if (password === "") {
-      setErrorPassword("La contraseña es obligatoria");
-      formularioValido = false;
+    if (!password) {
+      setErrorPassword("Introduce tu contraseña.");
+      hayErrores = true;
     } else if (!validarPassword(password)) {
       setErrorPassword(
-        "La contraseña no cumple los requisitos",
+        "La contraseña debe tener al menos 6 caracteres, una mayúscula, una minúscula, un número y un carácter especial."
       );
-      formularioValido = false;
+      hayErrores = true;
     }
 
-    // =====================================================
-    // Si hay errores, no se envia al backend
-    if (!formularioValido) {
+    if (hayErrores) {
       return;
     }
 
-    // =====================================================
-    // Datos que se enviarán al BACKEND
-    const userData = {
-      dni,
-      password,
-    };
-
     try {
-      // Llamada al BACKEND
-      const resp = await axiosInstance.post(
-        "/users/login",
-        userData,
-      );
+      setLoading(true);
 
-      // Guardar los datos del usuario
-      localStorage.setItem(
-        "usuario",
-        JSON.stringify(resp.data),
-      );
+      const response = await axiosInstance.post("/users/login", {
+        dni: dni.toUpperCase(),
+        password: password,
+      });
 
-      // Guardar el token por separado
-      localStorage.setItem("token", resp.data.token);
+      const datosUsuario = response.data;
 
-      // Ir a la pantalla de semanas
+      // Guardar usuario y token
+      localStorage.setItem("usuario", JSON.stringify(datosUsuario));
+      localStorage.setItem("token", datosUsuario.token);
+
+      // Ir a la pantalla principal
       navigate("/weeks");
     } catch (error) {
-      // Si el login falla
+      console.error("Error al iniciar sesión:", error);
 
-      console.log("error.code ", error.code);
-      console.log("error.response ", error.response);
-
-      if (error.code === "ERR_NETWORK" || !error.response) {
-        setErrorLogin(
-          "Error de red: Prueba de nuevo más tarde",
+      if (error.response?.status === 401) {
+        setErrorGeneral("DNI o contraseña incorrectos.");
+      } else {
+        setErrorGeneral(
+          "No se ha podido iniciar sesión. Inténtalo de nuevo."
         );
-        return;
       }
-
-      if (error.response) {
-        if (error.response.status == 401) {
-          setErrorLogin("DNI o contraseña incorrectos");
-        } else {
-          setErrorLogin(
-            "Servicio no disponible. Prueba de nuevo más tarde",
-          );
-        }
-      }
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <h2>Acceso Alumnos</h2>
+    <div className="login-page">
+      <div className="login-container">
+        <div className="login-card">
+          <h1>Iniciar sesión</h1>
 
-        <p className="login-subtitle">
-          Accede con tu DNI y contraseña.
-        </p>
+          <p className="login-subtitle">
+            Introduce tus datos para acceder
+          </p>
 
-        <div className="form-group">
-          <label>DNI:</label>
+          <form onSubmit={handleSubmit}>
+            {/* DNI */}
+            <div className="form-group">
+              <label htmlFor="dni">DNI</label>
 
-          <div className="input-container">
-            <FaUser className="input-icon" />
+              <input
+                id="dni"
+                type="text"
+                value={dni}
+                onChange={(e) => {
+                  setDni(e.target.value.toUpperCase());
+                  setErrorDni("");
+                  setErrorGeneral("");
+                }}
+                placeholder="12345678A"
+                maxLength={9}
+                disabled={loading}
+              />
 
-            <input
-              className="login-input"
-              type="text"
-              value={dni}
-              onChange={(e) => setDni(e.target.value)}
-              placeholder="12345678A"
-              required
-            />
-          </div>
-
-          {errorDni && (
-            <p className="error">{errorDni}</p>
-          )}
-        </div>
-
-        <div className="form-group">
-          <label>Contraseña:</label>
-
-          <div className="input-container">
-            <FaLock className="input-icon" />
-
-            <input
-              className="login-input"
-              type={
-                isPasswordVisible
-                  ? "text"
-                  : "password"
-              }
-              value={password}
-              onChange={(e) =>
-                setPassword(e.target.value)
-              }
-              placeholder="************"
-              required
-            />
-
-            {/* Botón mostrar/ocultar contraseña */}
-            <button
-              type="button"
-              className="password-toggle"
-              onClick={togglePassword}
-            >
-              {isPasswordVisible ? (
-                <FaEyeSlash />
-              ) : (
-                <FaEye />
+              {errorDni && (
+                <p className="error-message">{errorDni}</p>
               )}
+            </div>
+
+            {/* Contraseña */}
+            <div className="form-group">
+              <label htmlFor="password">Contraseña</label>
+
+              <div className="password-container">
+                <input
+                  id="password"
+                  type={mostrarPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setErrorPassword("");
+                    setErrorGeneral("");
+                  }}
+                  placeholder="Contraseña"
+                  disabled={loading}
+                />
+
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() =>
+                    setMostrarPassword(!mostrarPassword)
+                  }
+                  disabled={loading}
+                >
+                  {mostrarPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+
+              {errorPassword && (
+                <p className="error-message">{errorPassword}</p>
+              )}
+            </div>
+
+            {/* Error general */}
+            {errorGeneral && (
+              <p className="error-message general-error">
+                {errorGeneral}
+              </p>
+            )}
+
+            {/* Botón */}
+            <button
+              type="submit"
+              className="login-button"
+              disabled={loading}
+            >
+              {loading ? "Iniciando sesión..." : "Iniciar sesión"}
             </button>
-          </div>
-
-          {errorPassword && (
-            <p className="error">
-              {errorPassword}
-            </p>
-          )}
+          </form>
         </div>
+      </div>
+    </div>
+  );
+}
 
-        <button
-          className="login-button"
-          onClick={iniciarSesion}
-        >
-          Iniciar sesión
-        </button>
-
-        {errorLogin && (
-          <p className="error login-er
-```
+export default Login;
