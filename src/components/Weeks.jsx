@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { FaGithub, FaLinkedin, FaEnvelope, FaWhatsapp } from "react-icons/fa";
 import { SiGmail } from "react-icons/si";
 import { axiosInstance } from "../utils/axios";
+
 function Weeks() {
   const navigate = useNavigate();
+
   const [avisosCerrados, setAvisosCerrados] = useState([]);
   const [mostrarEstados, setMostrarEstados] = useState(false);
   const [descargandoWord, setDescargandoWord] = useState(null);
@@ -13,6 +15,7 @@ function Weeks() {
   // Usuario guardado despues del login
   const usuarioGuardado = JSON.parse(localStorage.getItem("usuario"));
 
+  // =====================================================
   // Datos de alumnos
   const [alumno, setAlumno] = useState({
     nombre: "",
@@ -20,23 +23,26 @@ function Weeks() {
     fechaInicio: "",
     fechaFin: "",
   });
+
   // =====================================================
   // Semanas
   const [semanas, setSemanas] = useState([]);
-  const [loading, setLoading] = useState(true);
 
+  // =====================================================
+  // Obtener datos de las prácticas
   useEffect(() => {
     const obtenerPracticas = async () => {
       try {
-        setLoading(true);
-
         const token = localStorage.getItem("token");
 
-        const response = await axiosInstance.get("/internships/my-internship", {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await axiosInstance.get(
+          "/internships/my-internship",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         const datos = response.data;
 
@@ -48,13 +54,8 @@ function Weeks() {
         });
 
         setSemanas(datos.weeklyLog || []);
-
-        setTimeout(() => {
-          setLoading(false);
-        }, 2000);
       } catch {
         // Error controlado sin mostrar información de depuración
-        setLoading(false);
       }
     };
 
@@ -75,7 +76,8 @@ function Weeks() {
     }
 
     return (
-      (palabras[0]?.charAt(0) || "") + (palabras[1]?.charAt(0) || "")
+      (palabras[0]?.charAt(0) || "") +
+      (palabras[1]?.charAt(0) || "")
     ).toUpperCase();
   }
 
@@ -128,9 +130,13 @@ function Weeks() {
 
     // Buscar la semana en la que estamos actualmente
     const semanaActualEncontrada = semanas.find((semana) => {
-      const inicio = new Date(semana.start_date.substring(0, 10) + "T00:00:00");
+      const inicio = new Date(
+        semana.start_date.substring(0, 10) + "T00:00:00",
+      );
 
-      const fin = new Date(semana.end_date.substring(0, 10) + "T00:00:00");
+      const fin = new Date(
+        semana.end_date.substring(0, 10) + "T00:00:00",
+      );
 
       return hoy >= inicio && hoy <= fin;
     });
@@ -153,7 +159,9 @@ function Weeks() {
     // Si estamos entre semanas o después de la última,
     // devolver la última semana que ya ha comenzado
     const semanasComenzadas = semanas.filter((semana) => {
-      const inicio = new Date(semana.start_date.substring(0, 10) + "T00:00:00");
+      const inicio = new Date(
+        semana.start_date.substring(0, 10) + "T00:00:00",
+      );
 
       return hoy >= inicio;
     });
@@ -164,17 +172,25 @@ function Weeks() {
 
     return 0;
   }
+
   // ======================================================
   // Calcular datos de progreso
-  const progreso = calcularProgreso(alumno.fechaInicio, alumno.fechaFin);
+  const progreso = calcularProgreso(
+    alumno.fechaInicio,
+    alumno.fechaFin,
+  );
 
   const semanaCalculada = calcularSemanaActual(semanas);
+
   const semanaActual =
-    semanas.length > 0 ? Math.min(semanaCalculada, semanas.length) : 0;
+    semanas.length > 0
+      ? Math.min(semanaCalculada, semanas.length)
+      : 0;
 
   const semanasCompletas = semanas.filter(
     (semana) =>
-      semana.status === "Completado" || semana.status === "Completada",
+      semana.status === "Completado" ||
+      semana.status === "Completada",
   ).length;
 
   // ======================================================
@@ -203,15 +219,16 @@ function Weeks() {
 
     return false;
   }
-  // function puedeEditar(semana) {
-  //   return true;
-  // }
-  // ======================================================
 
   // ======================================================
   // Funcion editarSemana
   function editarSemana(semana) {
-    navigate("/editweek/" + semana.week_number + "/" + semana.week_id);
+    navigate(
+      "/editweek/" +
+        semana.week_number +
+        "/" +
+        semana.week_id,
+    );
   }
 
   // ======================================================
@@ -237,22 +254,30 @@ function Weeks() {
   // ======================================================
   // Funcion obtener Estado Semana
   function obtenerEstadoSemana(semana) {
-    const fechaSeleccionada = new Date().toISOString().substring(0, 10);
+    const fechaSeleccionada = new Date()
+      .toISOString()
+      .substring(0, 10);
 
     if (!alumno.fechaInicio || !alumno.fechaFin) {
       return semana.status || "Pendiente";
     }
 
-    const fechaInicioPracticas = alumno.fechaInicio.substring(0, 10);
+    const fechaInicioPracticas =
+      alumno.fechaInicio.substring(0, 10);
 
-    const fechaInicioSemana = semana.start_date.substring(0, 10);
+    const fechaInicioSemana =
+      semana.start_date.substring(0, 10);
 
-    const fechaFinSemana = semana.end_date.substring(0, 10);
+    const fechaFinSemana =
+      semana.end_date.substring(0, 10);
 
     // ==========================================
     // SEMANA COMPLETADA
     // ==========================================
-    if (semana.status === "Completado" || semana.status === "Completada") {
+    if (
+      semana.status === "Completado" ||
+      semana.status === "Completada"
+    ) {
       return "Completada";
     }
 
@@ -289,10 +314,12 @@ function Weeks() {
 
     return "Pendiente";
   }
+
   // ======================================================
   // Funcion para descargar Word (Backend)
   const descargarWord = async (weekId) => {
     const token = localStorage.getItem("token");
+
     setDescargandoWord(weekId);
 
     try {
@@ -306,12 +333,15 @@ function Weeks() {
         },
       );
 
-      const disposition = response.headers["content-disposition"];
+      const disposition =
+        response.headers["content-disposition"];
 
       let filename = "hoja_actividad.docx";
 
       if (disposition) {
-        const fileNameMatch = disposition.match(/filename\s*=\s*"?([^";]+)"?/);
+        const fileNameMatch = disposition.match(
+          /filename\s*\*=\s*"?([^";]+)"?/,
+        );
 
         if (fileNameMatch) {
           filename = fileNameMatch[1];
@@ -336,6 +366,7 @@ function Weeks() {
       link.remove();
 
       URL.revokeObjectURL(href);
+
       setDescargandoWord(null);
     } catch {
       setDescargandoWord(null);
@@ -358,10 +389,15 @@ function Weeks() {
 
           <div className="iniciales-container">
             <span className="avatar-circulo">
-              {obtenerIniciales(`${alumno.nombre} ${alumno.apellidos}`)}
+              {obtenerIniciales(
+                `${alumno.nombre} ${alumno.apellidos}`,
+              )}
             </span>
 
-            <button className="btn-cerrar-sesion" onClick={cerrarSesion}>
+            <button
+              className="btn-cerrar-sesion"
+              onClick={cerrarSesion}
+            >
               Cerrar sesión
             </button>
           </div>
@@ -376,6 +412,7 @@ function Weeks() {
         {/* ============================= */}
         {/* PROGRESO */}
         {/* ============================= */}
+
         <h1 className="mensaje-bienvenida">
           Bienvenido, {alumno.nombre} {alumno.apellidos}
         </h1>
@@ -413,164 +450,199 @@ function Weeks() {
           </div>
 
           <p className="texto-progreso">
-            {semanasCompletas} de {semanas.length} semanas completadas
+            {semanasCompletas} de {semanas.length} semanas
+            completadas
           </p>
 
           <p className="semana-actual">
             Semana actual: {semanaActual}
           </p>
         </div>
+
         {/* ============================= */}
         {/* TÍTULO LISTADO */}
         {/* ============================= */}
 
-        <h2 className="titulo-seccion">Listado de semanas</h2>
-        {loading && (
-          <div className="spinner-container">
-            <div className="spinner"></div>
-          </div>
-        )}
+        <h2 className="titulo-seccion">
+          Listado de semanas
+        </h2>
 
         {/* ============================= */}
         {/* LISTADO DE SEMANAS */}
         {/* ============================= */}
 
-        {!loading && (
-          <div className="listado-semanas">
-            {semanas.map((semana) => {
-              /* ====================================== */
-              /* OBTENER ESTADO VISUAL */
-              /* ====================================== */
+        <div className="listado-semanas">
+          {semanas.map((semana) => {
+            /* ======================================
+               OBTENER ESTADO VISUAL
+            ====================================== */
 
-              const estado = obtenerEstadoSemana(semana) || "";
+            const estado = obtenerEstadoSemana(semana) || "";
 
-              const estadoMinusculas = estado.toLowerCase();
+            const estadoMinusculas =
+              estado.toLowerCase();
 
-              const isCompletado = estadoMinusculas === "completada";
+            const isCompletado =
+              estadoMinusculas === "completada";
 
-              const isEnCurso = estadoMinusculas === "en curso";
+            const isEnCurso =
+              estadoMinusculas === "en curso";
 
-              const isPendiente = estadoMinusculas === "pendiente";
+            const isPendiente =
+              estadoMinusculas === "pendiente";
 
-              const fechaHoy = new Date();
-              fechaHoy.setHours(0, 0, 0, 0);
+            const fechaHoy = new Date();
+            fechaHoy.setHours(0, 0, 0, 0);
 
-              const fechaInicioSemana = new Date(semana.start_date);
-              fechaInicioSemana.setHours(0, 0, 0, 0);
+            const fechaInicioSemana = new Date(
+              semana.start_date,
+            );
 
-              const isFutura = fechaHoy < fechaInicioSemana;
-              /* ====================================== */
-              /* FECHAS PARA EL AVISO */
-              /* ====================================== */
+            fechaInicioSemana.setHours(0, 0, 0, 0);
 
-              const fechaFinSemana = new Date(semana.end_date);
+            const isFutura =
+              fechaHoy < fechaInicioSemana;
 
-              const fechaComprobar = new Date();
+            /* ======================================
+               FECHAS PARA EL AVISO
+            ====================================== */
 
-              const semanaTerminada = fechaComprobar > fechaFinSemana;
+            const fechaFinSemana = new Date(
+              semana.end_date,
+            );
 
-              const mostrarAviso =
-                semanaTerminada &&
-                !isCompletado &&
-                !avisosCerrados.includes(semana.week_id);
+            const fechaComprobar = new Date();
 
-              return (
-                <div key={semana.week_id} className="contenedor-semana">
+            const semanaTerminada =
+              fechaComprobar > fechaFinSemana;
+
+            const mostrarAviso =
+              semanaTerminada &&
+              !isCompletado &&
+              !avisosCerrados.includes(
+                semana.week_id,
+              );
+
+            return (
+              <div
+                key={semana.week_id}
+                className="contenedor-semana"
+              >
+                {/* ============================= */}
+                {/* AVISO DE SEMANA */}
+                {/* ============================= */}
+
+                {mostrarAviso && (
+                  <div className="aviso-semana">
+                    <span>
+                      Semana {semana.week_number} sin
+                      completar.
+                    </span>
+
+                    <button
+                      className="cerrar-aviso"
+                      type="button"
+                      onClick={() =>
+                        cerrarAviso(semana.week_id)
+                      }
+                    >
+                      ×
+                    </button>
+                  </div>
+                )}
+
+                {/* ============================= */}
+                {/* TARJETA DE LA SEMANA */}
+                {/* ============================= */}
+
+                <div className="semana-tarjeta">
                   {/* ============================= */}
-                  {/* AVISO DE SEMANA */}
+                  {/* INFORMACIÓN */}
                   {/* ============================= */}
 
-                  {mostrarAviso && (
-                    <div className="aviso-semana">
-                      <span>
-                        Semana {semana.week_number} sin completar.
-                      </span>
-                      <button
-                        className="cerrar-aviso"
-                        type="button"
-                        onClick={() => cerrarAviso(semana.week_id)}
-                      >
-                        ×
-                      </button>
-                    </div>
-                  )}
+                  <div className="semana-info">
+                    <h3 className="semana-titulo">
+                      Semana {semana.week_number}
+                    </h3>
+
+                    <p className="semana-fechas">
+                      Desde{" "}
+                      {formatearFecha(
+                        semana.start_date,
+                      )}{" "}
+                      hasta{" "}
+                      {formatearFecha(
+                        semana.end_date,
+                      )}
+                    </p>
+                  </div>
 
                   {/* ============================= */}
-                  {/* TARJETA DE LA SEMANA */}
+                  {/* ACCIONES */}
                   {/* ============================= */}
 
-                  <div className="semana-tarjeta">
+                  <div className="semana-acciones">
                     {/* ============================= */}
-                    {/* INFORMACIÓN */}
-                    {/* ============================= */}
-
-                    <div className="semana-info">
-                      <h3 className="semana-titulo">
-                        Semana {semana.week_number}
-                      </h3>
-
-                      <p className="semana-fechas">
-                        Desde {formatearFecha(semana.start_date)} hasta{" "}
-                        {formatearFecha(semana.end_date)}
-                      </p>
-                    </div>
-
-                    {/* ============================= */}
-                    {/* ACCIONES */}
+                    {/* ESTADO */}
                     {/* ============================= */}
 
-                    <div className="semana-acciones">
-                      {/* ============================= */}
-                      {/* ESTADO */}
-                      {/* ============================= */}
-
-                      <span
-                        className={`estado-badge ${isCompletado
+                    <span
+                      className={`estado-badge ${
+                        isCompletado
                           ? "badge-completado"
                           : isEnCurso
                             ? "badge-en-curso"
                             : isFutura
                               ? "badge-pendiente-rojo"
                               : "badge-pendiente"
-                          }`}
-                      >
-                        {estado}
-                      </span>
+                      }`}
+                    >
+                      {estado}
+                    </span>
 
-                      {/* ============================= */}
-                      {/* BOTÓN EDITAR */}
-                      {/* ============================= */}
+                    {/* ============================= */}
+                    {/* BOTÓN EDITAR */}
+                    {/* ============================= */}
 
-                      <button
-                        className="btn-accion"
-                        onClick={() => editarSemana(semana)}
-                        disabled={!puedeEditar(semana)}
-                      >
-                        Editar
-                      </button>
+                    <button
+                      className="btn-accion"
+                      onClick={() =>
+                        editarSemana(semana)
+                      }
+                      disabled={!puedeEditar(semana)}
+                    >
+                      Editar
+                    </button>
 
-                      {/* ============================= */}
-                      {/* BOTÓN DESCARGAR WORD */}
-                      {/* ============================= */}
+                    {/* ============================= */}
+                    {/* BOTÓN DESCARGAR WORD */}
+                    {/* ============================= */}
 
-                      <button
-                        className="btn-accion"
-                        disabled={!isCompletado || descargandoWord === semana.week_id}
-                        onClick={() => descargarWord(semana.week_id)}
-                      >
-                        {descargandoWord === semana.week_id ? (
-                          <span className="spinner-boton"></span>
-                        ) : (
-                          "Descargar"
-                        )}
-                      </button>
-                    </div>
+                    <button
+                      className="btn-accion"
+                      disabled={
+                        !isCompletado ||
+                        descargandoWord ===
+                          semana.week_id
+                      }
+                      onClick={() =>
+                        descargarWord(semana.week_id)
+                      }
+                    >
+                      {descargandoWord ===
+                      semana.week_id ? (
+                        <span className="spinner-boton"></span>
+                      ) : (
+                        "Descargar"
+                      )}
+                    </button>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
+              </div>
+            );
+          })}
+        </div>
+
         {/* ============================= */}
         {/* FOOTER */}
         {/* ============================= */}
@@ -580,12 +652,14 @@ function Weeks() {
 
           <div className="footer-col">
             <h2 className="footer-logo">
-              <span className="naranja">ANMB</span> SOFTWARE
+              <span className="naranja">ANMB</span>{" "}
+              SOFTWARE
             </h2>
 
             <p>
-              Desarrollo de aplicaciones web para la gestión de prácticas,
-              formación y soluciones empresariales.
+              Desarrollo de aplicaciones web para la
+              gestión de prácticas, formación y
+              soluciones empresariales.
             </p>
           </div>
 
@@ -594,7 +668,10 @@ function Weeks() {
           <div className="footer-col footer-centro">
             <h3>¿Necesitas ayuda?</h3>
 
-            <p>Si tienes alguna duda, ponte en contacto con nosotros.</p>
+            <p>
+              Si tienes alguna duda, ponte en contacto
+              con nosotros.
+            </p>
 
             <div className="botones-ayuda">
               <a className="btn-contactar">
@@ -604,7 +681,9 @@ function Weeks() {
 
               <button
                 className="btn-estados"
-                onClick={() => setMostrarEstados(true)}
+                onClick={() =>
+                  setMostrarEstados(true)
+                }
               >
                 ℹ Estados de prácticas
               </button>
@@ -671,36 +750,51 @@ function Weeks() {
             <div className="modal-estados">
               <button
                 className="cerrar-modal"
-                onClick={() => setMostrarEstados(false)}
+                onClick={() =>
+                  setMostrarEstados(false)
+                }
               >
                 ✕
               </button>
 
               <h2>Estados de las prácticas</h2>
 
-              <p>Consulta el significado de cada estado de tus semanas.</p>
+              <p>
+                Consulta el significado de cada estado
+                de tus semanas.
+              </p>
 
               <div className="estado-modal">
                 <h3>🟠 Pendiente</h3>
-                <p>La semana todavía no ha comenzado.</p>
+                <p>
+                  La semana todavía no ha comenzado.
+                </p>
               </div>
 
               <div className="estado-modal">
                 <h3>🔵 En curso</h3>
 
-                <p>La semana está activa y puedes editar las tareas.</p>
+                <p>
+                  La semana está activa y puedes editar
+                  las tareas.
+                </p>
               </div>
 
               <div className="estado-modal">
                 <h3>🟢 Completada</h3>
 
-                <p>La semana está finalizada y permite descargar el Word.</p>
+                <p>
+                  La semana está finalizada y permite
+                  descargar el Word.
+                </p>
               </div>
 
               <div className="estado-modal">
                 <h3>🔴 Pendiente</h3>
 
-                <p>La semana no está disponible.</p>
+                <p>
+                  La semana no está disponible.
+                </p>
               </div>
             </div>
           </div>
