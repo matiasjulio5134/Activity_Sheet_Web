@@ -1,3 +1,4 @@
+```jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../utils/axios";
@@ -12,11 +13,12 @@ import {
   FaEye,
   FaEyeSlash,
 } from "react-icons/fa";
+
 function Login() {
   const [dni, setDni] = useState("");
   const [password, setPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   // Errores de validación
@@ -31,9 +33,11 @@ function Login() {
 
     // Comprobar que tenga 8 números y una letra
     const formato = /^[0-9]{8}[A-Za-z]$/;
+
     if (!formato.test(dni)) {
       return false;
     }
+
     const numero = parseInt(dni.substring(0, 8));
     const letra = dni.substring(8).toUpperCase();
 
@@ -41,25 +45,24 @@ function Login() {
 
     return letras[resto] === letra;
   }
-  // ======================================================
 
   // ======================================================
-  // Validacion de la contraseña
+  // Validación de la contraseña
   function validarPassword(password) {
-    const formato = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#_-]).{6,}$/;
+    const formato =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.#_-]).{6,}$/;
+
     return formato.test(password);
   }
-  // ======================================================
 
   // ======================================================
-  // Funcion para mostrar contraseña
+  // Función para mostrar/ocultar contraseña
   const togglePassword = () => {
     setIsPasswordVisible((prev) => !prev);
   };
-  // ======================================================
 
   // ======================================================
-  // Se ejecuta al pulsar el boton. Funcion iniciar Sesion
+  // Se ejecuta al pulsar el botón. Función iniciar sesión
   async function iniciarSesion() {
     // Limpiar errores anteriores
     setErrorDni("");
@@ -68,6 +71,7 @@ function Login() {
 
     let formularioValido = true;
 
+    // =====================================================
     // Validar DNI
     if (dni === "") {
       setErrorDni("El DNI es obligatorio");
@@ -77,39 +81,43 @@ function Login() {
       formularioValido = false;
     }
 
+    // =====================================================
     // Validar contraseña
     if (password === "") {
       setErrorPassword("La contraseña es obligatoria");
       formularioValido = false;
     } else if (!validarPassword(password)) {
-      setErrorPassword("La contraseña no cumple los requisitos");
+      setErrorPassword(
+        "La contraseña no cumple los requisitos",
+      );
       formularioValido = false;
     }
 
-    // Si hay erroes, no se envia al backend
+    // =====================================================
+    // Si hay errores, no se envia al backend
     if (!formularioValido) {
       return;
     }
 
-    // Datos que se enviaran al BACKEND
+    // =====================================================
+    // Datos que se enviarán al BACKEND
     const userData = {
       dni,
       password,
     };
 
     try {
-      // SPINNER DE CARGA
-      setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 3000));
-
       // Llamada al BACKEND
-      const resp = await axiosInstance.post("/users/login", userData);
-
-      // Mostar la respuesta por consola
-      //console.log("RESPUESTA LOGIN:", resp.data);
+      const resp = await axiosInstance.post(
+        "/users/login",
+        userData,
+      );
 
       // Guardar los datos del usuario
-      localStorage.setItem("usuario", JSON.stringify(resp.data));
+      localStorage.setItem(
+        "usuario",
+        JSON.stringify(resp.data),
+      );
 
       // Guardar el token por separado
       localStorage.setItem("token", resp.data.token);
@@ -123,7 +131,9 @@ function Login() {
       console.log("error.response ", error.response);
 
       if (error.code === "ERR_NETWORK" || !error.response) {
-        setErrorLogin("Error de red: Prueba de nuevo más tarde");
+        setErrorLogin(
+          "Error de red: Prueba de nuevo más tarde",
+        );
         return;
       }
 
@@ -131,23 +141,29 @@ function Login() {
         if (error.response.status == 401) {
           setErrorLogin("DNI o contraseña incorrectos");
         } else {
-          setErrorLogin("Servicio no disponible. Prueba de nuevo más tarde");
+          setErrorLogin(
+            "Servicio no disponible. Prueba de nuevo más tarde",
+          );
         }
       }
-    } finally {
-      setLoading(false);
     }
-    // =====================================================
   }
+
   return (
     <div className="login-container">
       <div className="login-card">
         <h2>Acceso Alumnos</h2>
-        <p className="login-subtitle">Accede con tu DNI y contraseña.</p>
+
+        <p className="login-subtitle">
+          Accede con tu DNI y contraseña.
+        </p>
+
         <div className="form-group">
           <label>DNI:</label>
+
           <div className="input-container">
             <FaUser className="input-icon" />
+
             <input
               className="login-input"
               type="text"
@@ -157,42 +173,61 @@ function Login() {
               required
             />
           </div>
-          {errorDni && <p className="error">{errorDni}</p>}
+
+          {errorDni && (
+            <p className="error">{errorDni}</p>
+          )}
         </div>
 
         <div className="form-group">
           <label>Contraseña:</label>
+
           <div className="input-container">
             <FaLock className="input-icon" />
+
             <input
               className="login-input"
-              type={isPasswordVisible ? "text" : "password"}
+              type={
+                isPasswordVisible
+                  ? "text"
+                  : "password"
+              }
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) =>
+                setPassword(e.target.value)
+              }
               placeholder="************"
               required
             />
+
             {/* Botón mostrar/ocultar contraseña */}
             <button
               type="button"
               className="password-toggle"
               onClick={togglePassword}
             >
-              {isPasswordVisible ? <FaEyeSlash /> : <FaEye />}
+              {isPasswordVisible ? (
+                <FaEyeSlash />
+              ) : (
+                <FaEye />
+              )}
             </button>
           </div>
-          {errorPassword && <p className="error">{errorPassword}</p>}
+
+          {errorPassword && (
+            <p className="error">
+              {errorPassword}
+            </p>
+          )}
         </div>
+
         <button
           className="login-button"
           onClick={iniciarSesion}
-          disabled={loading}
         >
-          {loading ? <span className="spinner-login"></span> : "Iniciar sesión"}
+          Iniciar sesión
         </button>
-        {errorLogin && <p className="error login-error">{errorLogin}</p>}
-      </div>
-    </div>
-  );
-}
-export default Login;
+
+        {errorLogin && (
+          <p className="error login-er
+```
