@@ -7,18 +7,11 @@ import {
   FaWhatsapp,
   FaDiscord,
 } from "react-icons/fa";
-import { SiGmail } from "react-icons/si";
 import { axiosInstance } from "../utils/axios";
 import { showToast } from "../components/Toast";
 function EditWeek() {
   const navigate = useNavigate();
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      navigate("/");
-    }
-  }, [navigate]);
+ 
   const { numero, weekId } = useParams();
   const [fechasSemana, setFechasSemana] = useState([]);
   const inputRefs = useRef({});
