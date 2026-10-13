@@ -106,7 +106,7 @@ function Login() {
       const resp = await axiosInstance.post("/users/login", userData);
 
       // Mostar la respuesta por consola
-      //console.log("RESPUESTA LOGIN:", resp.data);
+      console.log("RESPUESTA LOGIN:", resp.data);
 
       // Guardar los datos del usuario
       localStorage.setItem("usuario", JSON.stringify(resp.data));
@@ -114,6 +114,7 @@ function Login() {
       // Guardar el token por separado
       localStorage.setItem("token", resp.data.token);
 
+      console.log("Login successful");
       // Ir a la pantalla de semanas
       navigate("/weeks");
     } catch (error) {

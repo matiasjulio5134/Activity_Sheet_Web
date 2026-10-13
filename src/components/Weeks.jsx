@@ -40,6 +40,8 @@ function Weeks() {
 
         const datos = response.data;
 
+        console.log("Datos obtenidos:", datos);
+
         setAlumno({
           nombre: usuarioGuardado?.nombre || "",
           apellidos: usuarioGuardado?.apellidos || "",
